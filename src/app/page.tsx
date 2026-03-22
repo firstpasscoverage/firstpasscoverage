@@ -1,8 +1,124 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 
 type Status = "idle" | "uploading" | "extracting" | "analyzing" | "done" | "error";
+
+// ── Score Parsing ────────────────────────────────────────────────────
+
+interface ParsedScores {
+  categories: { name: string; score: number }[];
+  overall: number | null;
+}
+
+function parseScores(text: string): ParsedScores {
+  const categories: { name: string; score: number }[] = [];
+  let overall: number | null = null;
+
+  for (const line of text.split("\n")) {
+    // Match headings like: PREMISE — Good (4) or OVERALL — Recommend (4)
+    // Handle em dash, en dash, or hyphen
+    const match = line.match(
+      /^(PREMISE|STRUCTURE|CHARACTER|CONFLICT|DIALOGUE|PACING|TONE|ORIGINALITY|LOGIC|CRAFT|OVERALL)\s*[—–-]\s*.+?\((\d)\)/
+    );
+    if (match) {
+      const [, name, scoreStr] = match;
+      const score = parseInt(scoreStr);
+      if (name === "OVERALL") {
+        overall = score;
+      } else {
+        categories.push({ name, score });
+      }
+    }
+  }
+
+  return { categories, overall };
+}
+
+// ── Ratings Grid Component ───────────────────────────────────────────
+
+const CATEGORY_COLUMNS = ["Very Poor", "Poor", "Fair", "Good", "Excellent"];
+const OVERALL_COLUMNS = ["Strong Pass", "Pass", "Consider", "Recommend", "Strong Recommend"];
+
+function RatingsGrid({ categories, overall }: ParsedScores) {
+  if (categories.length === 0) return null;
+
+  return (
+    <div className="my-6 py-4 border-t border-b border-gray-200">
+      {/* Category ratings */}
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            <th className="w-28" />
+            {CATEGORY_COLUMNS.map((col) => (
+              <th
+                key={col}
+                className="py-2 px-1 font-semibold text-gray-400 text-center text-[10px] uppercase tracking-wider"
+              >
+                {col}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map(({ name, score }) => (
+            <tr key={name}>
+              <td className="py-1 pr-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">
+                {name}
+              </td>
+              {[1, 2, 3, 4, 5].map((val) => (
+                <td key={val} className="py-1 px-1 text-center">
+                  {val === score ? (
+                    <span className="text-gray-700 font-semibold">✓</span>
+                  ) : (
+                    ""
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Overall rating — separate header row since labels differ */}
+      {overall !== null && (
+        <table className="w-full text-sm border-collapse mt-4">
+          <thead>
+            <tr>
+              <th className="w-28" />
+              {OVERALL_COLUMNS.map((col) => (
+                <th
+                  key={col}
+                  className="py-2 px-1 font-semibold text-gray-400 text-center text-[10px] uppercase tracking-wider"
+                >
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="py-1 pr-3 font-bold text-gray-700 text-xs uppercase tracking-wide">
+                Overall
+              </td>
+              {[1, 2, 3, 4, 5].map((val) => (
+                <td key={val} className="py-1 px-1 text-center">
+                  {val === overall ? (
+                    <span className="text-gray-700 font-bold text-base">✓</span>
+                  ) : (
+                    ""
+                  )}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+// ── Main Page ────────────────────────────────────────────────────────
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -26,7 +142,9 @@ export default function Home() {
       return;
     }
     if (f.size > 4 * 1024 * 1024) {
-      setError(`File is too large (${(f.size / 1024 / 1024).toFixed(1)}MB). Maximum is 4MB.`);
+      setError(
+        `File is too large (${(f.size / 1024 / 1024).toFixed(1)}MB). Maximum is 4MB.`
+      );
       return;
     }
     setFile(f);
@@ -44,6 +162,21 @@ export default function Home() {
     },
     [handleFile]
   );
+
+  // Parse scores from completed coverage
+  const scores = useMemo(() => parseScores(coverage), [coverage]);
+
+  // Split coverage at metadata boundary for grid insertion
+  const coverageSplit = useMemo(() => {
+    if (!coverage) return null;
+    // Find "Genre:" which is the first metadata field — the grid goes before it
+    const splitIndex = coverage.indexOf("\n**Genre:**");
+    if (splitIndex === -1) return null;
+    return {
+      beforeMetadata: coverage.slice(0, splitIndex),
+      afterMetadata: coverage.slice(splitIndex),
+    };
+  }, [coverage]);
 
   const analyze = async () => {
     if (!file) return;
@@ -131,11 +264,12 @@ export default function Home() {
               className={`
                 border-2 border-dashed rounded-lg p-12 text-center cursor-pointer
                 transition-colors duration-150
-                ${dragOver
-                  ? "border-blue-400 bg-blue-50"
-                  : file
-                    ? "border-green-300 bg-green-50"
-                    : "border-gray-300 hover:border-gray-400 bg-white"
+                ${
+                  dragOver
+                    ? "border-blue-400 bg-blue-50"
+                    : file
+                      ? "border-green-300 bg-green-50"
+                      : "border-gray-300 hover:border-gray-400 bg-white"
                 }
               `}
             >
@@ -165,9 +299,7 @@ export default function Home() {
               )}
             </div>
 
-            {error && (
-              <p className="mt-3 text-red-600 text-sm">{error}</p>
-            )}
+            {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
 
             <div className="mt-4 flex gap-3">
               <button
@@ -175,9 +307,10 @@ export default function Home() {
                 disabled={!file}
                 className={`
                   px-6 py-2.5 rounded-lg font-medium text-sm transition-colors
-                  ${file
-                    ? "bg-gray-900 text-white hover:bg-gray-700"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  ${
+                    file
+                      ? "bg-gray-900 text-white hover:bg-gray-700"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   }
                 `}
               >
@@ -242,9 +375,30 @@ export default function Home() {
               ref={coverageRef}
               className="bg-white border border-gray-200 rounded-lg p-6 max-h-[70vh] overflow-y-auto"
             >
-              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-                {coverage}
-              </pre>
+              {status === "done" && coverageSplit && scores.categories.length > 0 ? (
+                <>
+                  {/* Cover page info + Logline */}
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
+                    {coverageSplit.beforeMetadata}
+                  </pre>
+
+                  {/* Ratings Grid */}
+                  <RatingsGrid
+                    categories={scores.categories}
+                    overall={scores.overall}
+                  />
+
+                  {/* Metadata through end of coverage */}
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
+                    {coverageSplit.afterMetadata}
+                  </pre>
+                </>
+              ) : (
+                /* Streaming or fallback — single block */
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
+                  {coverage}
+                </pre>
+              )}
             </div>
           </div>
         )}
