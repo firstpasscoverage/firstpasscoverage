@@ -332,15 +332,15 @@ function RatingsGrid({
   );
 }
 
-function RichParagraph({ text, style }: { text: string; style?: object }) {
+function RichParagraph({ text, style }: { text: string; style?: any }) {
   const segments = splitItalicSegments(text);
 
   if (segments.length === 1 && !segments[0].italic) {
-    return <Text style={style ? [s.bodyText, style] : s.bodyText}>{segments[0].text}</Text>;
+    return <Text style={[s.bodyText, style]}>{segments[0].text}</Text>;
   }
 
   return (
-    <Text style={style ? [s.bodyText, style] : s.bodyText}>
+    <Text style={[s.bodyText, style]}>
       {segments.map((seg, i) =>
         seg.italic ? (
           <Text key={i} style={s.italicText}>{seg.text}</Text>
@@ -352,7 +352,7 @@ function RichParagraph({ text, style }: { text: string; style?: object }) {
   );
 }
 
-function TextBlock({ text, style }: { text: string; style?: object }) {
+function TextBlock({ text, style }: { text: string; style?: any }) {
   const paragraphs = text
     .split(/\n\n+/)
     .map((p) => p.trim())
