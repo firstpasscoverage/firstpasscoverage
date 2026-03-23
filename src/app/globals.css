@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+/* Brand serif font — used for logo and section headings only */
+.font-brand {
+  font-family: var(--font-libre), Georgia, "Times New Roman", serif;
+}

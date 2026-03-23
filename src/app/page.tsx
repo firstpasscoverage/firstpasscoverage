@@ -1,438 +1,130 @@
-"use client";
+import Link from "next/link";
 
-import { useState, useRef, useCallback, useMemo } from "react";
-
-type Status = "idle" | "uploading" | "extracting" | "analyzing" | "done" | "error";
-
-// ── Score Parsing ────────────────────────────────────────────────────
-
-interface ParsedScores {
-  categories: { name: string; score: number }[];
-  overall: number | null;
-}
-
-function parseScores(text: string): ParsedScores {
-  const categories: { name: string; score: number }[] = [];
-  let overall: number | null = null;
-
-  for (const line of text.split("\n")) {
-    const match = line.match(
-      /^(PREMISE|STRUCTURE|CHARACTER|CONFLICT|DIALOGUE|PACING|TONE|ORIGINALITY|LOGIC|CRAFT|OVERALL)\s*[—–-]\s*.+?\((\d)\)/
-    );
-    if (match) {
-      const [, name, scoreStr] = match;
-      const score = parseInt(scoreStr);
-      if (name === "OVERALL") {
-        overall = score;
-      } else {
-        categories.push({ name, score });
-      }
-    }
-  }
-
-  return { categories, overall };
-}
-
-// ── Ratings Grid Component ───────────────────────────────────────────
-
-const CATEGORY_COLUMNS = ["Very Poor", "Poor", "Fair", "Good", "Excellent"];
-const OVERALL_COLUMNS = ["Strong Pass", "Pass", "Consider", "Recommend", "Strong Recommend"];
-
-function RatingsGrid({ categories, overall }: ParsedScores) {
-  if (categories.length === 0) return null;
-
-  return (
-    <div className="my-6 py-4 border-t border-b border-gray-200">
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr>
-            <th className="w-28" />
-            {CATEGORY_COLUMNS.map((col) => (
-              <th
-                key={col}
-                className="py-2 px-1 font-semibold text-gray-400 text-center text-[10px] uppercase tracking-wider"
-              >
-                {col}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map(({ name, score }) => (
-            <tr key={name}>
-              <td className="py-1 pr-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">
-                {name}
-              </td>
-              {[1, 2, 3, 4, 5].map((val) => (
-                <td key={val} className="py-1 px-1 text-center">
-                  {val === score ? (
-                    <span className="text-gray-700 font-semibold">✓</span>
-                  ) : (
-                    ""
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {overall !== null && (
-        <table className="w-full text-sm border-collapse mt-4">
-          <thead>
-            <tr>
-              <th className="w-28" />
-              {OVERALL_COLUMNS.map((col) => (
-                <th
-                  key={col}
-                  className="py-2 px-1 font-semibold text-gray-400 text-center text-[10px] uppercase tracking-wider"
-                >
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="py-1 pr-3 font-bold text-gray-700 text-xs uppercase tracking-wide">
-                Overall
-              </td>
-              {[1, 2, 3, 4, 5].map((val) => (
-                <td key={val} className="py-1 px-1 text-center">
-                  {val === overall ? (
-                    <span className="text-gray-700 font-bold text-base">✓</span>
-                  ) : (
-                    ""
-                  )}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
-}
-
-// ── Main Page ────────────────────────────────────────────────────────
+const FEATURES = [
+  {
+    title: "Logline",
+    desc: "A distilled premise statement that captures the core dramatic engine.",
+  },
+  {
+    title: "Synopsis",
+    desc: "A comprehensive narrative summary that tracks every major plot movement.",
+  },
+  {
+    title: "10 scored categories",
+    desc: "Premise, structure, character, conflict, dialogue, pacing, tone, originality, logic, and craft.",
+  },
+  {
+    title: "Overall recommendation",
+    desc: "A clear verdict from Strong Pass to Strong Recommend, with substantive reasoning.",
+  },
+  {
+    title: "Detailed commentary",
+    desc: "Page-specific analysis with citations — not vague praise, but useful notes you can act on.",
+  },
+  {
+    title: "Downloadable PDF",
+    desc: "Professional coverage document you can share, print, or attach to a submission package.",
+  },
+];
 
 export default function Home() {
-  const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<Status>("idle");
-  const [coverage, setCoverage] = useState("");
-  const [error, setError] = useState("");
-  const [dragOver, setDragOver] = useState(false);
-  const [pdfBusy, setPdfBusy] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const coverageRef = useRef<HTMLDivElement>(null);
-
-  const reset = useCallback(() => {
-    setFile(null);
-    setStatus("idle");
-    setCoverage("");
-    setError("");
-  }, []);
-
-  const handleFile = useCallback((f: File) => {
-    if (!f.name.toLowerCase().endsWith(".pdf")) {
-      setError("Please select a PDF file.");
-      return;
-    }
-    if (f.size > 4 * 1024 * 1024) {
-      setError(
-        `File is too large (${(f.size / 1024 / 1024).toFixed(1)}MB). Maximum is 4MB.`
-      );
-      return;
-    }
-    setFile(f);
-    setError("");
-    setCoverage("");
-    setStatus("idle");
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setDragOver(false);
-      const f = e.dataTransfer.files[0];
-      if (f) handleFile(f);
-    },
-    [handleFile]
-  );
-
-  const scores = useMemo(() => parseScores(coverage), [coverage]);
-
-  const coverageSplit = useMemo(() => {
-    if (!coverage) return null;
-    let splitIndex = coverage.indexOf("\nGenre:");
-    if (splitIndex === -1) splitIndex = coverage.indexOf("\n**Genre:");
-    if (splitIndex === -1) return null;
-    return {
-      beforeMetadata: coverage.slice(0, splitIndex),
-      afterMetadata: coverage.slice(splitIndex),
-    };
-  }, [coverage]);
-
-  const handleDownloadPDF = useCallback(async () => {
-    if (!coverage || pdfBusy) return;
-    setPdfBusy(true);
-
-    try {
-      const [{ pdf }, { createCoveragePDF }, { parseCoverageForPDF }] =
-        await Promise.all([
-          import("@react-pdf/renderer"),
-          import("@/components/CoveragePDF"),
-          import("@/lib/parse-coverage"),
-        ]);
-
-      const data = parseCoverageForPDF(coverage);
-      const blob = await pdf(createCoveragePDF(data)).toBlob();
-
-      const safeName = data.scriptTitle
-        ? data.scriptTitle
-            .replace(/[^a-zA-Z0-9\s-]/g, "")
-            .trim()
-            .replace(/\s+/g, "-")
-            .toLowerCase()
-        : "screenplay";
-
-      const dateSlug = new Date().toISOString().slice(0, 10);
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `coverage-${safeName}-${dateSlug}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("PDF generation failed:", err);
-    } finally {
-      setPdfBusy(false);
-    }
-  }, [coverage, pdfBusy]);
-
-  const analyze = async () => {
-    if (!file) return;
-
-    setError("");
-    setCoverage("");
-    setStatus("uploading");
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      setStatus("analyzing");
-
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || `Server error (${response.status})`);
-      }
-
-      if (!response.body) {
-        throw new Error("No response stream available");
-      }
-
-      setStatus("analyzing");
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        fullText += chunk;
-        setCoverage(fullText);
-
-        if (coverageRef.current) {
-          coverageRef.current.scrollTop = coverageRef.current.scrollHeight;
-        }
-      }
-
-      setStatus("done");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-      setStatus("error");
-    }
-  };
-
-  const statusMessages: Record<Status, string> = {
-    idle: "",
-    uploading: "Uploading...",
-    extracting: "Extracting screenplay text...",
-    analyzing: "Analyzing — this takes 60–120 seconds...",
-    done: "Coverage complete.",
-    error: "",
-  };
-
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-2xl font-semibold mb-1">Screenplay Coverage Tool</h1>
-        <p className="text-gray-500 mb-8">
-          Upload a screenplay PDF to generate AI-powered coverage.
-        </p>
+    <>
+      {/* Hero */}
+      <section className="pt-20 pb-16 text-center">
+        <div className="max-w-[600px] mx-auto px-6">
+          <h1 className="font-brand text-[32px] font-normal text-[#111] leading-[1.3] tracking-[-0.5px] mb-4">
+            Professional screenplay coverage
+            <br />
+            in less than three minutes.
+          </h1>
+          <p className="text-[15px] text-gray-500 leading-relaxed mb-8">
+            Upload your script. Get detailed analysis — premise, structure,
+            character, dialogue, and seven more categories — and a clear
+            assessment. Built for writers, producers, and development
+            executives who need a quick yet rigorous first take.
+          </p>
 
-        {status === "idle" || status === "error" ? (
-          <div className="mb-6">
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragOver(true);
-              }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className={`
-                border-2 border-dashed rounded-lg p-12 text-center cursor-pointer
-                transition-colors duration-150
-                ${
-                  dragOver
-                    ? "border-blue-400 bg-blue-50"
-                    : file
-                      ? "border-green-300 bg-green-50"
-                      : "border-gray-300 hover:border-gray-400 bg-white"
-                }
-              `}
+          <div className="py-4 px-6 bg-[#fffbf5] border border-[#f0e6d6] rounded-lg mb-6">
+              <p className="text-[13px] text-[#78644e] italic text-center">
+                Coverage of your first pass, or a first pass of coverage.
+              </p>
+            </div>
+
+          <Link
+            href="/coverage"
+            className="inline-block px-7 py-2.5 bg-[#111] text-[#fafafa] text-sm font-medium rounded-md hover:bg-[#333] transition-colors"
+          >
+            Upload Screenplay
+          </Link>
+          <p className="text-xs text-gray-400 mt-3.5">
+            PDF format only · 4MB max · Coverage in about 3 minutes
+          </p>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="w-10 h-px bg-gray-300 mx-auto" />
+
+      {/* What You Get */}
+      <section className="py-16">
+        <div className="max-w-[640px] mx-auto px-6">
+          <h2 className="font-brand text-xl font-normal text-[#111] text-center tracking-[-0.3px] mb-10">
+            What you get
+          </h2>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+            {FEATURES.map((f) => (
+              <div key={f.title}>
+                <div className="text-[13px] font-medium text-[#111] mb-1">
+                  {f.title}
+                </div>
+                <div className="text-[12.5px] text-gray-500 leading-relaxed">
+                  {f.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Sample Preview */}
+      <section className="py-8">
+        <div className="max-w-[640px] mx-auto px-6">
+          <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-white h-[360px]">
+            <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white to-transparent z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white to-transparent z-10" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-sm text-gray-300 italic">
+                Sample coverage preview
+              </p>
+            </div>
+          </div>
+          <div className="text-center mt-4">
+            <Link
+              href="/samples"
+              className="text-[13px] text-gray-500 hover:text-[#111] transition-colors underline underline-offset-2"
             >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleFile(f);
-                }}
-              />
-
-              {file ? (
-                <div>
-                  <p className="text-lg font-medium text-green-700">{file.name}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {(file.size / 1024 / 1024).toFixed(1)}MB — Click or drop to replace
-                  </p>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-lg text-gray-600">Drop a screenplay PDF here</p>
-                  <p className="text-sm text-gray-400 mt-1">or click to browse</p>
-                </div>
-              )}
-            </div>
-
-            {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
-
-            <div className="mt-4 flex gap-3">
-              <button
-                onClick={analyze}
-                disabled={!file}
-                className={`
-                  px-6 py-2.5 rounded-lg font-medium text-sm transition-colors
-                  ${
-                    file
-                      ? "bg-gray-900 text-white hover:bg-gray-700"
-                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  }
-                `}
-              >
-                Analyze Screenplay
-              </button>
-
-              {file && (
-                <button
-                  onClick={reset}
-                  className="px-4 py-2.5 rounded-lg text-sm text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
+              See full sample coverages
+            </Link>
           </div>
-        ) : null}
+        </div>
+      </section>
 
-        {status !== "idle" && status !== "error" && (
-          <div className="mb-6">
-            <div className="flex items-center gap-3">
-              {status !== "done" && (
-                <div className="w-4 h-4 border-2 border-gray-400 border-t-gray-900 rounded-full animate-spin" />
-              )}
-              {status === "done" && (
-                <div className="w-4 h-4 bg-green-500 rounded-full" />
-              )}
-              <span className="text-sm text-gray-600">
-                {statusMessages[status]}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {coverage && (
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold">Coverage</h2>
-              {status === "done" && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleDownloadPDF}
-                    disabled={pdfBusy}
-                    className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors disabled:opacity-50"
-                  >
-                    {pdfBusy ? "Generating..." : "Download PDF"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(coverage);
-                    }}
-                    className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-                  >
-                    Copy to clipboard
-                  </button>
-                  <button
-                    onClick={reset}
-                    className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-                  >
-                    Analyze another
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div
-              ref={coverageRef}
-              className="bg-white border border-gray-200 rounded-lg p-6 max-h-[70vh] overflow-y-auto"
-            >
-              {status === "done" && coverageSplit && scores.categories.length > 0 ? (
-                <>
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-                    {coverageSplit.beforeMetadata}
-                  </pre>
-
-                  <RatingsGrid
-                    categories={scores.categories}
-                    overall={scores.overall}
-                  />
-
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-                    {coverageSplit.afterMetadata}
-                  </pre>
-                </>
-              ) : (
-                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-                  {coverage}
-                </pre>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </main>
+      {/* Credibility */}
+      <section className="py-12 pb-20">
+        <div className="max-w-[640px] mx-auto px-6 text-center">
+          <h2 className="font-brand text-xl font-normal text-[#111] tracking-[-0.3px] mb-3">
+            Built by people who read scripts for a living.
+          </h2>
+          <p className="text-sm text-gray-500 leading-relaxed">
+            First Pass Coverage was built by development executives and
+            producers who&apos;ve covered thousands of screenplays. The evaluation
+            framework reflects how professionals actually assess material, based on
+            the instincts and pattern recognition that come from
+            years in the room.
+          </p>
+        </div>
+      </section>
+    </>
   );
 }
