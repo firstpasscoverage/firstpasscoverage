@@ -120,8 +120,7 @@ export default function Home() {
             First Pass Coverage was built by development executives and
             producers who&apos;ve covered thousands of screenplays. The evaluation
             framework reflects how professionals actually assess material, based on
-            the instincts and pattern recognition that come from
-            years in the room.
+            experience that comes from years in the room.
           </p>
         </div>
       </section>
