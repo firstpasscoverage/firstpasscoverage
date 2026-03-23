@@ -164,7 +164,8 @@ export default function Home() {
 
   const coverageSplit = useMemo(() => {
     if (!coverage) return null;
-    const splitIndex = coverage.indexOf("\nGenre:");
+    let splitIndex = coverage.indexOf("\nGenre:");
+    if (splitIndex === -1) splitIndex = coverage.indexOf("\n**Genre:");
     if (splitIndex === -1) return null;
     return {
       beforeMetadata: coverage.slice(0, splitIndex),
