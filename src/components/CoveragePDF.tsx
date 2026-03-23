@@ -336,11 +336,11 @@ function RichParagraph({ text, style }: { text: string; style?: object }) {
   const segments = splitItalicSegments(text);
 
   if (segments.length === 1 && !segments[0].italic) {
-    return <Text style={[s.bodyText, style]}>{segments[0].text}</Text>;
+    return <Text style={style ? [s.bodyText, style] : s.bodyText}>{segments[0].text}</Text>;
   }
 
   return (
-    <Text style={[s.bodyText, style]}>
+    <Text style={style ? [s.bodyText, style] : s.bodyText}>
       {segments.map((seg, i) =>
         seg.italic ? (
           <Text key={i} style={s.italicText}>{seg.text}</Text>
