@@ -16,8 +16,6 @@ function parseScores(text: string): ParsedScores {
   let overall: number | null = null;
 
   for (const line of text.split("\n")) {
-    // Match headings like: PREMISE — Good (4) or OVERALL — Recommend (4)
-    // Handle em dash, en dash, or hyphen
     const match = line.match(
       /^(PREMISE|STRUCTURE|CHARACTER|CONFLICT|DIALOGUE|PACING|TONE|ORIGINALITY|LOGIC|CRAFT|OVERALL)\s*[—–-]\s*.+?\((\d)\)/
     );
@@ -45,7 +43,6 @@ function RatingsGrid({ categories, overall }: ParsedScores) {
 
   return (
     <div className="my-6 py-4 border-t border-b border-gray-200">
-      {/* Category ratings */}
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr>
@@ -80,7 +77,6 @@ function RatingsGrid({ categories, overall }: ParsedScores) {
         </tbody>
       </table>
 
-      {/* Overall rating — separate header row since labels differ */}
       {overall !== null && (
         <table className="w-full text-sm border-collapse mt-4">
           <thead>
@@ -126,6 +122,7 @@ export default function Home() {
   const [coverage, setCoverage] = useState("");
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const coverageRef = useRef<HTMLDivElement>(null);
 
@@ -163,20 +160,55 @@ export default function Home() {
     [handleFile]
   );
 
-  // Parse scores from completed coverage
   const scores = useMemo(() => parseScores(coverage), [coverage]);
 
-  // Split coverage at metadata boundary for grid insertion
   const coverageSplit = useMemo(() => {
     if (!coverage) return null;
-    // Find "Genre:" which is the first metadata field — the grid goes before it
-    const splitIndex = coverage.indexOf("\n**Genre:**");
+    const splitIndex = coverage.indexOf("\nGenre:");
     if (splitIndex === -1) return null;
     return {
       beforeMetadata: coverage.slice(0, splitIndex),
       afterMetadata: coverage.slice(splitIndex),
     };
   }, [coverage]);
+
+  const handleDownloadPDF = useCallback(async () => {
+    if (!coverage || pdfBusy) return;
+    setPdfBusy(true);
+
+    try {
+      const [{ pdf }, { createCoveragePDF }, { parseCoverageForPDF }] =
+        await Promise.all([
+          import("@react-pdf/renderer"),
+          import("@/components/CoveragePDF"),
+          import("@/lib/parse-coverage"),
+        ]);
+
+      const data = parseCoverageForPDF(coverage);
+      const blob = await pdf(createCoveragePDF(data)).toBlob();
+
+      const safeName = data.scriptTitle
+        ? data.scriptTitle
+            .replace(/[^a-zA-Z0-9\s-]/g, "")
+            .trim()
+            .replace(/\s+/g, "-")
+            .toLowerCase()
+        : "screenplay";
+
+      const dateSlug = new Date().toISOString().slice(0, 10);
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `coverage-${safeName}-${dateSlug}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    } finally {
+      setPdfBusy(false);
+    }
+  }, [coverage, pdfBusy]);
 
   const analyze = async () => {
     if (!file) return;
@@ -205,7 +237,6 @@ export default function Home() {
         throw new Error("No response stream available");
       }
 
-      // Stream the response
       setStatus("analyzing");
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -219,7 +250,6 @@ export default function Home() {
         fullText += chunk;
         setCoverage(fullText);
 
-        // Auto-scroll to bottom as content streams in
         if (coverageRef.current) {
           coverageRef.current.scrollTop = coverageRef.current.scrollHeight;
         }
@@ -244,13 +274,11 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
         <h1 className="text-2xl font-semibold mb-1">Screenplay Coverage Tool</h1>
         <p className="text-gray-500 mb-8">
           Upload a screenplay PDF to generate AI-powered coverage.
         </p>
 
-        {/* Upload Area */}
         {status === "idle" || status === "error" ? (
           <div className="mb-6">
             <div
@@ -329,7 +357,6 @@ export default function Home() {
           </div>
         ) : null}
 
-        {/* Status */}
         {status !== "idle" && status !== "error" && (
           <div className="mb-6">
             <div className="flex items-center gap-3">
@@ -346,13 +373,19 @@ export default function Home() {
           </div>
         )}
 
-        {/* Coverage Output */}
         {coverage && (
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold">Coverage</h2>
               {status === "done" && (
                 <div className="flex gap-2">
+                  <button
+                    onClick={handleDownloadPDF}
+                    disabled={pdfBusy}
+                    className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors disabled:opacity-50"
+                  >
+                    {pdfBusy ? "Generating..." : "Download PDF"}
+                  </button>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(coverage);
@@ -377,24 +410,20 @@ export default function Home() {
             >
               {status === "done" && coverageSplit && scores.categories.length > 0 ? (
                 <>
-                  {/* Cover page info + Logline */}
                   <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
                     {coverageSplit.beforeMetadata}
                   </pre>
 
-                  {/* Ratings Grid */}
                   <RatingsGrid
                     categories={scores.categories}
                     overall={scores.overall}
                   />
 
-                  {/* Metadata through end of coverage */}
                   <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
                     {coverageSplit.afterMetadata}
                   </pre>
                 </>
               ) : (
-                /* Streaming or fallback — single block */
                 <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
                   {coverage}
                 </pre>
