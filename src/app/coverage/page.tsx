@@ -2,7 +2,53 @@
 
 import { useState, useRef, useCallback, useMemo } from "react";
 
-type Status = "idle" | "uploading" | "extracting" | "analyzing" | "done" | "error";
+type Status = "idle" | "uploading" | "extracting" | "analyzing" | "scoring" | "done" | "error";
+
+// ── Score label mappings ─────────────────────────────────────────────
+
+const CATEGORY_SCORE_LABELS: Record<number, string> = {
+  1: "Very Poor", 2: "Poor", 3: "Fair", 4: "Good", 5: "Excellent",
+};
+const OVERALL_SCORE_LABELS: Record<number, string> = {
+  1: "Strong Pass", 2: "Pass", 3: "Consider", 4: "Recommend", 5: "Strong Recommend",
+};
+
+// ── Score merging (Pass 2 scores → Pass 1 headings) ─────────────────
+
+function mergeScoresIntoHeadings(
+  text: string,
+  scores: Record<string, number>
+): string {
+  const categories = [
+    "PREMISE", "STRUCTURE", "CHARACTER", "CONFLICT", "DIALOGUE",
+    "PACING", "TONE", "ORIGINALITY", "LOGIC", "CRAFT",
+  ];
+
+  let result = text;
+
+  for (const cat of categories) {
+    if (scores[cat]) {
+      const label = CATEGORY_SCORE_LABELS[scores[cat]] || "";
+      // Replace standalone heading line with scored heading
+      result = result.replace(
+        new RegExp(`^${cat}$`, "m"),
+        `${cat} — ${label} (${scores[cat]})`
+      );
+    }
+  }
+
+  if (scores.OVERALL) {
+    const label = OVERALL_SCORE_LABELS[scores.OVERALL] || "";
+    result = result.replace(
+      /^OVERALL$/m,
+      `OVERALL — ${label} (${scores.OVERALL})`
+    );
+  }
+
+  return result;
+}
+
+// ── Score parsing (from merged text, for ratings grid) ───────────────
 
 interface ParsedScores {
   categories: { name: string; score: number }[];
@@ -30,6 +76,8 @@ function parseScores(text: string): ParsedScores {
 
   return { categories, overall };
 }
+
+// ── Ratings grid component ───────────────────────────────────────────
 
 const CATEGORY_COLUMNS = ["Very Poor", "Poor", "Fair", "Good", "Excellent"];
 const OVERALL_COLUMNS = ["Strong Pass", "Pass", "Consider", "Recommend", "Strong Recommend"];
@@ -109,6 +157,8 @@ function RatingsGrid({ categories, overall }: ParsedScores) {
     </div>
   );
 }
+
+// ── Main page component ──────────────────────────────────────────────
 
 export default function CoveragePage() {
   const [file, setFile] = useState<File | null>(null);
@@ -235,19 +285,69 @@ export default function CoveragePage() {
       setStatus("analyzing");
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let fullText = "";
+      let rawText = "";
+      let scoringStarted = false;
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        fullText += chunk;
-        setCoverage(fullText);
+        rawText += chunk;
 
-        if (coverageRef.current) {
+        // Detect scoring phase transition
+        if (!scoringStarted && rawText.includes("<!--FPC_SCORING-->")) {
+          scoringStarted = true;
+          setStatus("scoring");
+        }
+
+        // Update display: show analysis text with markers stripped
+        const displayText = rawText.replace(
+          /\n?<!--FPC_SCORING-->[\s\S]*$/,
+          ""
+        );
+        setCoverage(displayText);
+
+        // Auto-scroll only during analysis phase
+        if (!scoringStarted && coverageRef.current) {
           coverageRef.current.scrollTop = coverageRef.current.scrollHeight;
         }
+      }
+
+      // ── Stream complete — process scores ─────────────────────────
+      const scoresMatch = rawText.match(/<!--FPC_SCORES:(\{[^}]*\})-->/);
+      if (scoresMatch) {
+        try {
+          const pass2Scores: Record<string, number> = JSON.parse(
+            scoresMatch[1]
+          );
+
+          // Strip all markers from raw text
+          let cleanText = rawText
+            .replace(/\n?<!--FPC_SCORING-->/, "")
+            .replace(/\n?<!--FPC_SCORES:\{[^}]*\}-->/, "")
+            .trimEnd();
+
+          // Merge scores into headings
+          cleanText = mergeScoresIntoHeadings(cleanText, pass2Scores);
+
+          setCoverage(cleanText);
+        } catch (parseErr) {
+          console.error("Failed to parse Pass 2 scores:", parseErr);
+          // Fall through — coverage displays without scores
+        }
+      }
+
+      // Check for scoring error
+      const errorMatch = rawText.match(/<!--FPC_SCORES_ERROR:(.*?)-->/);
+      if (errorMatch) {
+        console.warn("Pass 2 scoring failed:", errorMatch[1]);
+        // Strip markers, show analysis without scores
+        const cleanText = rawText
+          .replace(/\n?<!--FPC_SCORING-->/, "")
+          .replace(/\n?<!--FPC_SCORES_ERROR:.*?-->/, "")
+          .trimEnd();
+        setCoverage(cleanText);
       }
 
       setStatus("done");
@@ -262,6 +362,7 @@ export default function CoveragePage() {
     uploading: "Uploading...",
     extracting: "Extracting screenplay text...",
     analyzing: "Analyzing — this takes 60–120 seconds...",
+    scoring: "Calibrating scores...",
     done: "Coverage complete.",
     error: "",
   };

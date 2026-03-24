@@ -1,17 +1,24 @@
 /**
  * POST /api/analyze
  *
- * Accepts a screenplay PDF via FormData, extracts text, and streams
- * coverage back from Claude Opus 4.6 via Vercel AI Gateway.
+ * Accepts a screenplay PDF via FormData, extracts text, and produces
+ * coverage via a two-pass architecture:
  *
- * Request: FormData with "file" field containing a PDF
- * Response: Streamed plain text (coverage output)
+ * Pass 1 (streamed): Analytical commentary without scores
+ * Pass 2 (not streamed): Reads commentary cold and assigns scores
+ *
+ * The response is a single stream. Analysis text streams in real time,
+ * followed by marker events for the scoring phase:
+ *   <!--FPC_SCORING-->     — signals scoring has begun
+ *   <!--FPC_SCORES:{...}--> — delivers the scores as JSON
+ *   <!--FPC_SCORES_ERROR:msg--> — if Pass 2 fails
  */
 
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { extractScreenplay } from "@/lib/extract-pdf";
-import { SYSTEM_PROMPT } from "@/lib/prompts/single-reader";
+import { ANALYSIS_PROMPT } from "@/lib/prompts/single-reader-analysis";
+import { SCORING_PROMPT } from "@/lib/prompts/single-reader-scoring";
 
 // Allow up to 5 minutes for the analysis to complete (requires Vercel Pro)
 export const maxDuration = 300;
@@ -27,6 +34,39 @@ const client = new Anthropic({
 
 // Max file size: 4MB (Vercel body limit is 4.5MB, leave headroom for FormData overhead)
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
+
+/**
+ * Extract the comments section (PREMISE through OVERALL) from Pass 1 output.
+ * Pass 2 receives ONLY this — no screenplay text, logline, synopsis, or metadata.
+ */
+function extractCommentary(fullText: string): string {
+  // Find PREMISE as a standalone heading line (start of comments section)
+  const match = fullText.match(/^PREMISE$/m);
+  if (!match || match.index === undefined) {
+    // Fallback: send everything (Pass 2 will still work, just with extra context)
+    console.warn("Could not locate PREMISE heading in Pass 1 output — sending full text to Pass 2");
+    return fullText;
+  }
+  return fullText.slice(match.index);
+}
+
+/**
+ * Parse Pass 2's structured score output into a record.
+ */
+function parsePassTwoScores(text: string): Record<string, number> {
+  const scores: Record<string, number> = {};
+  const categories = [
+    "PREMISE", "STRUCTURE", "CHARACTER", "CONFLICT", "DIALOGUE",
+    "PACING", "TONE", "ORIGINALITY", "LOGIC", "CRAFT", "OVERALL",
+  ];
+  for (const line of text.split("\n")) {
+    const match = line.match(/^([A-Z]+):\s*(\d)/);
+    if (match && categories.includes(match[1])) {
+      scores[match[1]] = parseInt(match[2]);
+    }
+  }
+  return scores;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -88,37 +128,90 @@ export async function POST(request: NextRequest) {
       `Extracted ${extraction.pageCount} pages, ~${extraction.estimatedTokens.toLocaleString()} tokens from "${file.name}"`
     );
 
-    // ── Stream analysis from Claude ──────────────────────────────────
-    const stream = client.messages.stream({
-      model: MODEL,
-      max_tokens: 8192,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `Please analyze the following screenplay and produce complete coverage.\n\n${extraction.text}`,
-        },
-      ],
-    });
-
-    // Convert the Anthropic stream to a ReadableStream of text chunks
+    // ── Two-pass analysis ────────────────────────────────────────────
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
+        let fullAnalysisText = "";
+
         try {
+          // ── Pass 1: Stream analytical commentary ───────────────────
+          const stream = client.messages.stream({
+            model: MODEL,
+            max_tokens: 8192,
+            system: ANALYSIS_PROMPT,
+            messages: [
+              {
+                role: "user",
+                content: `Please analyze the following screenplay and produce complete coverage.\n\n${extraction.text}`,
+              },
+            ],
+          });
+
           for await (const event of stream) {
             if (
               event.type === "content_block_delta" &&
               event.delta.type === "text_delta"
             ) {
-              controller.enqueue(encoder.encode(event.delta.text));
+              const chunk = event.delta.text;
+              fullAnalysisText += chunk;
+              controller.enqueue(encoder.encode(chunk));
             }
           }
-          controller.close();
+
+          // ── Signal scoring phase to frontend ───────────────────────
+          controller.enqueue(encoder.encode("\n<!--FPC_SCORING-->"));
+
+          // ── Pass 2: Score from commentary ──────────────────────────
+          const commentary = extractCommentary(fullAnalysisText);
+
+          console.log(
+            `Pass 1 complete. Commentary extracted (${commentary.length} chars). Running Pass 2...`
+          );
+
+          const scoringResponse = await client.messages.create({
+            model: MODEL,
+            max_tokens: 256,
+            system: SCORING_PROMPT,
+            messages: [
+              {
+                role: "user",
+                content: commentary,
+              },
+            ],
+          });
+
+          const scoresText =
+            scoringResponse.content[0].type === "text"
+              ? scoringResponse.content[0].text
+              : "";
+
+          const scores = parsePassTwoScores(scoresText);
+
+          console.log("Pass 2 scores:", scores);
+
+          // Send scores to frontend
+          controller.enqueue(
+            encoder.encode(`\n<!--FPC_SCORES:${JSON.stringify(scores)}-->`)
+          );
         } catch (err) {
-          console.error("Streaming error:", err);
-          controller.error(err);
+          console.error("Analysis error:", err);
+
+          // If we have analysis text, the user still gets the commentary
+          // even if scoring failed
+          if (fullAnalysisText.length > 0) {
+            const errorMsg =
+              err instanceof Error ? err.message : "Scoring failed";
+            controller.enqueue(
+              encoder.encode(`\n<!--FPC_SCORES_ERROR:${errorMsg}-->`)
+            );
+          } else {
+            controller.error(err);
+            return;
+          }
         }
+
+        controller.close();
       },
     });
 
