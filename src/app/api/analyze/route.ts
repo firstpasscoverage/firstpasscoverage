@@ -19,6 +19,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { extractScreenplay } from "@/lib/extract-pdf";
 import { ANALYSIS_PROMPT } from "@/lib/prompts/single-reader-analysis";
 import { SCORING_PROMPT } from "@/lib/prompts/single-reader-scoring";
+import { auth, currentUser } from '@clerk/nextjs/server'
+import { getOrCreateUser } from '@/lib/db/users'
 
 // Allow up to 5 minutes for the analysis to complete (requires Vercel Pro)
 export const maxDuration = 300;
@@ -70,6 +72,20 @@ function parsePassTwoScores(text: string): Record<string, number> {
 
 export async function POST(request: NextRequest) {
   try {
+    
+    // ── Authenticate and sync user ───────────────────────────────────
+    const { userId: clerkId } = await auth()
+    if (!clerkId) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      )
+    }
+
+    const clerkUser = await currentUser()
+    const email = clerkUser?.emailAddresses[0]?.emailAddress ?? 'unknown'
+    const dbUser = await getOrCreateUser(clerkId, email)
+    
     // ── Parse the uploaded file ──────────────────────────────────────
     const formData = await request.formData();
     const file = formData.get("file");

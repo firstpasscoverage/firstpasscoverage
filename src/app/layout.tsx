@@ -3,6 +3,7 @@ import { Libre_Baskerville } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import "./globals.css";
+import { ClerkProvider } from '@clerk/nextjs'
 
 const libre = Libre_Baskerville({
   subsets: ["latin"],
@@ -32,9 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={libre.variable}>
       <body className="bg-[#fafafa] text-[#111] antialiased">
+        <ClerkProvider>
         <Nav />
         <main className="min-h-[calc(100vh-140px)]">{children}</main>
         <Footer />
+        </ClerkProvider>
       </body>
     </html>
   );
