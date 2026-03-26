@@ -7,6 +7,8 @@
  * Pass 1 (streamed): Analytical commentary without scores
  * Pass 2 (not streamed): Reads commentary cold and assigns scores
  *
+ * After Pass 2, the merged coverage is saved to the database.
+ *
  * The response is a single stream. Analysis text streams in real time,
  * followed by marker events for the scoring phase:
  *   <!--FPC_SCORING-->     — signals scoring has begun
@@ -19,8 +21,14 @@ import Anthropic from "@anthropic-ai/sdk";
 import { extractScreenplay } from "@/lib/extract-pdf";
 import { ANALYSIS_PROMPT } from "@/lib/prompts/single-reader-analysis";
 import { SCORING_PROMPT } from "@/lib/prompts/single-reader-scoring";
-import { auth, currentUser } from '@clerk/nextjs/server'
-import { getOrCreateUser } from '@/lib/db/users'
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { getOrCreateUser } from "@/lib/db/users";
+import { saveCoverage } from "@/lib/db/coverages";
+import { parseCoverageForPDF } from "@/lib/parse-coverage";
+import {
+  mergeScoresIntoAnalysis,
+  computeCalculatedScore,
+} from "@/lib/coverage-utils";
 
 // Allow up to 5 minutes for the analysis to complete (requires Vercel Pro)
 export const maxDuration = 300;
@@ -46,7 +54,9 @@ function extractCommentary(fullText: string): string {
   const match = fullText.match(/^PREMISE$/m);
   if (!match || match.index === undefined) {
     // Fallback: send everything (Pass 2 will still work, just with extra context)
-    console.warn("Could not locate PREMISE heading in Pass 1 output — sending full text to Pass 2");
+    console.warn(
+      "Could not locate PREMISE heading in Pass 1 output — sending full text to Pass 2"
+    );
     return fullText;
   }
   return fullText.slice(match.index);
@@ -72,20 +82,20 @@ function parsePassTwoScores(text: string): Record<string, number> {
 
 export async function POST(request: NextRequest) {
   try {
-    
     // ── Authenticate and sync user ───────────────────────────────────
-    const { userId: clerkId } = await auth()
+    const { userId: clerkId } = await auth();
     if (!clerkId) {
       return new Response(
         JSON.stringify({ error: "Authentication required" }),
         { status: 401, headers: { "Content-Type": "application/json" } }
-      )
+      );
     }
 
-    const clerkUser = await currentUser()
-    const email = clerkUser?.emailAddresses[0]?.emailAddress ?? 'unknown'
-    const dbUser = await getOrCreateUser(clerkId, email)
-    
+    const clerkUser = await currentUser();
+    const email =
+      clerkUser?.emailAddresses[0]?.emailAddress ?? "unknown";
+    const dbUser = await getOrCreateUser(clerkId, email);
+
     // ── Parse the uploaded file ──────────────────────────────────────
     const formData = await request.formData();
     const file = formData.get("file");
@@ -124,7 +134,8 @@ export async function POST(request: NextRequest) {
       console.error("PDF extraction failed:", err);
       return new Response(
         JSON.stringify({
-          error: "Could not extract text from this PDF. It may be corrupted, encrypted, or image-only.",
+          error:
+            "Could not extract text from this PDF. It may be corrupted, encrypted, or image-only.",
         }),
         { status: 422, headers: { "Content-Type": "application/json" } }
       );
@@ -133,8 +144,10 @@ export async function POST(request: NextRequest) {
     if (extraction.estimatedTokens < 1000) {
       return new Response(
         JSON.stringify({
-          error: "This PDF doesn't appear to contain enough text for a screenplay. Extracted only ~" +
-            extraction.estimatedTokens.toLocaleString() + " tokens.",
+          error:
+            "This PDF doesn't appear to contain enough text for a screenplay. Extracted only ~" +
+            extraction.estimatedTokens.toLocaleString() +
+            " tokens.",
         }),
         { status: 422, headers: { "Content-Type": "application/json" } }
       );
@@ -210,6 +223,51 @@ export async function POST(request: NextRequest) {
           controller.enqueue(
             encoder.encode(`\n<!--FPC_SCORES:${JSON.stringify(scores)}-->`)
           );
+
+          // ── Save coverage to database ──────────────────────────────
+          try {
+            const mergedText = mergeScoresIntoAnalysis(
+              fullAnalysisText,
+              scores
+            );
+            const parsed = parseCoverageForPDF(mergedText);
+
+            // Extract specific metadata fields for queryable columns
+            const genre =
+              parsed.metadata.find(
+                (m) => m.key.toLowerCase() === "genre"
+              )?.value ?? "";
+            const timePeriod =
+              parsed.metadata.find(
+                (m) => m.key.toLowerCase() === "time period"
+              )?.value ?? "";
+
+            await saveCoverage({
+              userId: dbUser.id,
+              title: parsed.scriptTitle,
+              writer: parsed.writer,
+              draftDate: parsed.draftDate,
+              logline: parsed.logline,
+              genre,
+              settingTimePeriod: timePeriod,
+              recommendation: parsed.overall?.label ?? "",
+              overallScore: parsed.overall?.score ?? 0,
+              calculatedScore: computeCalculatedScore(scores),
+              categoryScores: scores,
+              coverageText: mergedText,
+              promptVersion: "v0.6.1",
+            });
+
+            console.log(
+              `Coverage saved for user ${dbUser.id}: "${parsed.scriptTitle}"`
+            );
+          } catch (saveErr) {
+            // Don't break the response — user still has their coverage
+            console.error(
+              "Failed to save coverage to database:",
+              saveErr
+            );
+          }
         } catch (err) {
           console.error("Analysis error:", err);
 
@@ -241,7 +299,9 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error("Unexpected error in /api/analyze:", err);
     return new Response(
-      JSON.stringify({ error: "An unexpected error occurred. Please try again." }),
+      JSON.stringify({
+        error: "An unexpected error occurred. Please try again.",
+      }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
