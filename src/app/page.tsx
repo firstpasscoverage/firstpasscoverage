@@ -41,7 +41,7 @@ export default function Home() {
       {/* The Problem */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-xl font-normal text-[#111] tracking-[-0.3px] mb-6">
+          <h2 className="font-brand text-2xl font-normal text-[#111] tracking-[-0.3px] mb-6">
             Coverage shouldn&apos;t be a luxury.
           </h2>
           <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
@@ -71,7 +71,7 @@ export default function Home() {
       {/* What You Get */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-xl font-normal text-[#111] text-center tracking-[-0.3px] mb-10">
+          <h2 className="font-brand text-2xl font-normal text-[#111] text-center tracking-[-0.3px] mb-10">
             What every coverage includes
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-6">
@@ -142,7 +142,7 @@ export default function Home() {
       {/* Why First Pass */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-xl font-normal text-[#111] tracking-[-0.3px] mb-8">
+          <h2 className="font-brand text-2xl font-normal text-[#111] tracking-[-0.3px] mb-8">
             Why this coverage is different
           </h2>
           <div className="space-y-8">
@@ -212,7 +212,7 @@ export default function Home() {
       {/* Credibility */}
       <section className="py-12 pb-20">
         <div className="max-w-[640px] mx-auto px-6 text-center">
-          <h2 className="font-brand text-xl font-normal text-[#111] tracking-[-0.3px] mb-3">
+          <h2 className="font-brand text-2xl font-normal text-[#111] tracking-[-0.3px] mb-3">
             Built by people who read scripts for a living.
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed">
