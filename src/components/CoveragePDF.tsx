@@ -5,6 +5,7 @@
 
 import {
   Document,
+  Font,
   Page,
   Text,
   View,
@@ -14,6 +15,22 @@ import type { CoverageData, ScoredSection } from "@/lib/parse-coverage";
 import { splitItalicSegments } from "@/lib/parse-coverage";
 
 // ── Styles ───────────────────────────────────────────────────────────
+
+// ── Brand Font ───────────────────────────────────────────────────────
+
+Font.register({
+  family: "Libre Baskerville",
+  fonts: [
+    {
+      src: "/fonts/LibreBaskerville-Regular.ttf",
+      fontWeight: 400,
+    },
+    {
+      src: "/fonts/LibreBaskerville-Bold.ttf",
+      fontWeight: 700,
+    },
+  ],
+});
 
 const COLORS = {
   black: "#1a1a1a",
@@ -49,10 +66,10 @@ const s = StyleSheet.create({
     justifyContent: "flex-end",
   },
   headerText: {
-    fontSize: 10,
-    fontFamily: "Helvetica",
-    color: COLORS.light,
-    letterSpacing: 3,
+    fontSize: 14,
+    fontFamily: "Libre Baskerville",
+    color: "#6b7280",
+    letterSpacing: -0.2,
   },
 
   // ── Footer (hairline + two text elements, all absolutely positioned) ──
@@ -434,7 +451,7 @@ export function createCoveragePDF(data: CoverageData) {
       <Page size="LETTER" style={s.page}>
         {/* Header — fixed View */}
         <View style={s.headerBar} fixed>
-          <Text style={s.headerText}>FIRST PASS COVERAGE</Text>
+          <Text style={s.headerText}>First Pass Coverage</Text>
         </View>
 
         {/* Footer — three separate fixed elements, no container */}
