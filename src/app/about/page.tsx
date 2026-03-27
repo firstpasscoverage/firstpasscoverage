@@ -1,45 +1,47 @@
 export default function AboutPage() {
   return (
     <div className="max-w-[640px] mx-auto px-6 py-12">
-      <h1 className="font-brand text-2xl font-normal mb-6">About</h1>
+      <h1 className="font-brand text-2xl font-normal mb-6">
+        About First Pass Coverage
+      </h1>
 
       <div className="space-y-5 text-sm text-gray-600 leading-relaxed">
         <p>
           First Pass Coverage was built by entertainment industry professionals
-          with decades of combined experience in development, production, and
-          film finance. We&apos;ve read thousands of screenplays across every
-          genre and budget level &mdash; as studio executives, as producers, as
-          investors evaluating material for funding, and as analysts building the
-          data infrastructure behind how scripts get assessed.
+          who&apos;ve spent their careers inside the screenplay evaluation
+          process &mdash; at talent agencies, in literary management, and in
+          development. We&apos;ve read thousands of scripts. We&apos;ve built
+          evaluation systems. We&apos;ve seen what good coverage looks like and
+          how rarely writers actually get it.
         </p>
 
         <p>
-          The evaluation framework behind First Pass Coverage isn&apos;t a
-          generic rubric. It reflects how experienced readers actually think
-          about material: Does the premise generate inherent tension? Does the
-          structure earn its length? Are the characters making active decisions?
-          Is the dialogue doing work beyond conveying information? Every category
-          was chosen because it&apos;s something a sharp development executive
-          would evaluate &mdash; and the scoring methodology was calibrated against
-          professional assessments to ensure consistency and rigor.
+          The evaluation framework behind FPC isn&apos;t a generic AI prompt.
+          It&apos;s a structured analytical methodology with ten diagnostic
+          categories, each defined by specific questions a professional reader
+          would ask. The rating rubric was calibrated against professional script
+          assessments across multiple screenplays and rating ranges. And the
+          system uses a two-pass architecture &mdash; one pass for analysis, a
+          separate pass for rating &mdash; designed to prevent the inflation that
+          plagues most AI evaluation tools.
         </p>
 
         <p>
-          We built this tool because we know how much time the coverage process
-          takes and how unevenly it&apos;s distributed. A script at a major
-          studio gets multiple reads from trained professionals. A script from an
-          independent writer might get one read from an overworked intern &mdash; or
-          none at all. First Pass Coverage gives every screenplay access to
-          detailed, substantive analysis regardless of where it came from or who
-          submitted it.
+          We built First Pass Coverage because the current landscape doesn&apos;t
+          serve most writers. Professional human coverage costs $75 to $300 per
+          read and takes days to weeks. AI coverage tools either lack a rigorous
+          methodology or default to flattering feedback that doesn&apos;t help
+          anyone improve. And the most popular affordable coverage services shut
+          down in the past year, leaving a gap that hasn&apos;t been filled.
         </p>
 
         <p>
-          The name says it all: this is a first pass. A rigorous, informed
-          starting point that helps writers understand how their material reads,
-          helps producers triage their pipeline, and helps executives focus their
-          attention where it matters. It&apos;s not the last word on any
-          screenplay &mdash; it&apos;s the first good read.
+          The name tells you our philosophy: this is a first pass. A rigorous,
+          calibrated starting point &mdash; not the final word on any screenplay.
+          Use it to understand how your material reads before you invest in
+          submissions, competitions, or further development. Use it to track your
+          progress across drafts. Use it to triage a reading pile. We built the
+          tool we wished existed when we were on the other side of the desk.
         </p>
       </div>
 
@@ -50,10 +52,10 @@ export default function AboutPage() {
         <p className="text-sm text-gray-600">
           Questions, feedback, or partnership inquiries:{" "}
           <a
-            href="mailto:j@emergentmediapartners.com"
+            href="mailto:contact@firstpasscoverage.com"
             className="text-[#111] underline underline-offset-2 hover:opacity-70 transition-opacity"
           >
-            admin@firstpasscoverage.com
+            contact@firstpasscoverage.com
           </a>
         </p>
       </div>

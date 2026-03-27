@@ -15,7 +15,7 @@ const libre = Libre_Baskerville({
 export const metadata: Metadata = {
   title: "First Pass Coverage — Professional Screenplay Coverage",
   description:
-    "Upload your screenplay and get detailed, professional coverage in under three minutes. Premise, structure, character, dialogue, and seven more scored categories with a clear recommendation.",
+    "Upload your screenplay and get detailed, professional coverage in under three minutes. Premise, structure, character, dialogue, and seven more rated categories with a clear recommendation.",
   openGraph: {
     title: "First Pass Coverage",
     description: "Professional screenplay coverage in under three minutes.",
