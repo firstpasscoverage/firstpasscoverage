@@ -29,6 +29,7 @@ import {
   mergeScoresIntoAnalysis,
   computeCalculatedScore,
 } from "@/lib/coverage-utils";
+import { validateScreenplay } from "@/lib/validate-screenplay";
 
 // Allow up to 5 minutes for the analysis to complete (requires Vercel Pro)
 export const maxDuration = 300;
@@ -156,6 +157,21 @@ export async function POST(request: NextRequest) {
     console.log(
       `Extracted ${extraction.pageCount} pages, ~${extraction.estimatedTokens.toLocaleString()} tokens from "${file.name}"`
     );
+
+// ── Validate that this is a feature screenplay ───────────────────
+    const validation = await validateScreenplay(
+      extraction.text,
+      extraction.pageCount,
+      client
+    );
+
+    if (!validation.valid) {
+      console.log(`Validation rejected "${file.name}": ${validation.reason}`);
+      return new Response(
+        JSON.stringify({ error: validation.reason }),
+        { status: 422, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // ── Two-pass analysis ────────────────────────────────────────────
     const encoder = new TextEncoder();
