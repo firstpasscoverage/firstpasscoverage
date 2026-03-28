@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-[15px] font-medium text-[#111] mb-2">Data Retention</h2>
-          <p>Uploaded screenplay files are not retained after coverage generation is complete. Coverage output is generated in your browser session and is not stored on our servers in the current version of the service. If we introduce accounts and coverage history in the future, this policy will be updated accordingly.</p>
+          <p>Uploaded screenplay files are not retained after coverage generation is complete. Generated coverage (including ratings, commentary, and metadata) is stored in your account so you can access it from your coverage library. You can request deletion of your stored coverage at any time by contacting us.</p>
         </section>
 
         <section>
