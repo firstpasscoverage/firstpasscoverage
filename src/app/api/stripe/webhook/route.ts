@@ -58,10 +58,18 @@ export async function POST(request: NextRequest) {
 
       // ── Subscription payment succeeded (new or renewal) ──────────
       case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice & { subscription?: string | null }
+        const invoice = event.data.object as Stripe.Invoice & {
+          subscription?: string | null
+          parent?: { subscription_details?: { subscription?: string } }
+        }
+
+        // Subscription ID location varies by Stripe API version
+        const subscriptionId = invoice.subscription
+          || invoice.parent?.subscription_details?.subscription
+          || null
 
         // Only handle subscription invoices
-        if (!invoice.subscription) break
+        if (!subscriptionId) break
 
         const customerId = invoice.customer as string
         const user = await getUserByStripeCustomerId(customerId)
@@ -72,7 +80,7 @@ export async function POST(request: NextRequest) {
 
         // Get the subscription to find the tier and period
         const subscription = await stripe.subscriptions.retrieve(
-          invoice.subscription as string
+          subscriptionId
         ) as unknown as Stripe.Subscription
 
 
@@ -122,8 +130,16 @@ export async function POST(request: NextRequest) {
 
       // ── Subscription payment failed ──────────────────────────────
       case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice & { subscription?: string | null }
-        if (!invoice.subscription) break
+        const invoice = event.data.object as Stripe.Invoice & {
+          subscription?: string | null
+          parent?: { subscription_details?: { subscription?: string } }
+        }
+
+        const failedSubId = invoice.subscription
+          || invoice.parent?.subscription_details?.subscription
+          || null
+
+        if (!failedSubId) break
 
         const customerId = invoice.customer as string
         const user = await getUserByStripeCustomerId(customerId)
