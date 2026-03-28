@@ -5,6 +5,21 @@ export const users = pgTable('users', {
   clerkId: text('clerk_id').notNull().unique(),
   email: text('email').notNull(),
   freeCoverageUsed: boolean('free_coverage_used').notNull().default(false),
+
+  // Stripe
+  stripeCustomerId: text('stripe_customer_id').unique(),
+
+  // Subscription tracking
+  subscriptionTier: text('subscription_tier'),           // 'writer' | 'producer' | 'executive' | null
+  subscriptionStatus: text('subscription_status'),       // 'active' | 'canceled' | 'past_due' | null
+  stripeSubscriptionId: text('stripe_subscription_id'),
+  subscriptionPeriodEnd: timestamp('subscription_period_end'),
+  subscriptionCredits: integer('subscription_credits').notNull().default(0),
+  subscriptionCreditsResetAt: timestamp('subscription_credits_reset_at'),
+
+  // Purchased credits (one-offs and bundles — never expire, never reset)
+  purchasedCredits: integer('purchased_credits').notNull().default(0),
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })

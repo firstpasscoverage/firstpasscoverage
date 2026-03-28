@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import Link from "next/link";
 
 type Status = "idle" | "uploading" | "extracting" | "analyzing" | "scoring" | "done" | "error";
 
@@ -169,6 +170,35 @@ export default function CoveragePage() {
   const [pdfBusy, setPdfBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const coverageRef = useRef<HTMLDivElement>(null);
+
+  // Credit balance
+  const [credits, setCredits] = useState<{
+    subscriptionCredits: number;
+    purchasedCredits: number;
+    subscriptionTier: string | null;
+  } | null>(null);
+  const [creditsLoading, setCreditsLoading] = useState(true);
+
+  const totalCredits = credits
+    ? credits.subscriptionCredits + credits.purchasedCredits
+    : 0;
+
+  const fetchCredits = useCallback(async () => {
+    try {
+      const res = await fetch('/api/user/credits');
+      if (res.ok) {
+        setCredits(await res.json());
+      }
+    } catch (err) {
+      console.error('Failed to fetch credits:', err);
+    } finally {
+      setCreditsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCredits();
+  }, [fetchCredits]);
 
   const reset = useCallback(() => {
     setFile(null);
@@ -351,6 +381,7 @@ export default function CoveragePage() {
       }
 
       setStatus("done");
+      fetchCredits(); // Refresh credit balance after use
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
@@ -370,11 +401,46 @@ export default function CoveragePage() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <h1 className="font-brand text-2xl font-normal mb-1">Get Coverage</h1>
-      <p className="text-gray-500 text-sm mb-8">
+      <p className="text-gray-500 text-sm mb-4">
         Upload a screenplay PDF to generate professional coverage.
       </p>
 
-      {status === "idle" || status === "error" ? (
+      {/* Credit balance */}
+      {!creditsLoading && credits && status === "idle" && (
+        <div className="mb-6 text-sm text-gray-500">
+          {totalCredits > 0 ? (
+            <span>
+              {credits.subscriptionCredits > 0 && (
+                <span>{credits.subscriptionCredits} monthly credit{credits.subscriptionCredits !== 1 ? 's' : ''}</span>
+              )}
+              {credits.subscriptionCredits > 0 && credits.purchasedCredits > 0 && (
+                <span> + </span>
+              )}
+              {credits.purchasedCredits > 0 && (
+                <span>{credits.purchasedCredits} purchased credit{credits.purchasedCredits !== 1 ? 's' : ''}</span>
+              )}
+              <span> available</span>
+            </span>
+          ) : (
+            <div className="bg-[#fffbf5] border border-[#f0e6d6] rounded-lg px-6 py-5 text-center">
+              <p className="text-[15px] font-medium text-[#111] mb-1">
+                No coverage credits available
+              </p>
+              <p className="text-[12.5px] text-gray-500 mb-3">
+                Purchase a single coverage or subscribe for monthly credits.
+              </p>
+              <Link
+                href="/pricing"
+                className="inline-block px-5 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors"
+              >
+                View Pricing
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {(status === "idle" || status === "error") && totalCredits > 0 ? (
         <div className="mb-6">
           <div
             onDragOver={(e) => {

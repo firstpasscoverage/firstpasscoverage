@@ -1,10 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+
+// Map each button to its Stripe price ID
+const PRICES = {
+  single: ‘price_1TFiIs0Tj3dRfbGz5i8AfYNU’,           // Single Coverage — $20
+  threePack: ‘price_1TFiS90Tj3dRfbGzUaFeXYXI’,        // 3-Pack — $30
+  writerMonthly: ‘price_1TFiMo0Tj3dRfbGz1KWdec3U’,    // Writer Monthly
+  writerAnnual: ‘price_1TFiMo0Tj3dRfbGzYCh0TWAo’,     // Writer Annual
+  producerMonthly: ‘price_1TFiOT0Tj3dRfbGzBFhkenUs’,  // Producer Monthly
+  producerAnnual: ‘price_1TFiP80Tj3dRfbGz7sUmyPSV’,   // Producer Annual
+  executiveMonthly: ‘price_1TFiPk0Tj3dRfbGzBHbStVty’, // Executive Monthly
+  executiveAnnual: ‘price_1TFiQE0Tj3dRfbGzMqjOD8eq',  // Executive Annual
+};
+
+async function handleCheckout(priceId: string) {
+  const res = await fetch('/api/stripe/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ priceId }),
+  });
+
+  const data = await res.json();
+
+  if (data.url) {
+    window.location.href = data.url;
+  } else {
+    alert(data.error || 'Something went wrong. Please try again.');
+  }
+}
 
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const checkout = async (key: keyof typeof PRICES) => {
+    setLoading(key);
+    try {
+      await handleCheckout(PRICES[key]);
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <div className="max-w-[900px] mx-auto px-6 py-12">
@@ -22,15 +59,25 @@ export default function PricingPage() {
           Just need one coverage?
         </div>
         <p className="text-[12.5px] text-gray-500 mb-3">
-          $20 per screenplay. No subscription required. Same analysis, same
-          quality, same three-minute turnaround.
+          No subscription required. Same analysis, same quality, same
+          three-minute turnaround.
         </p>
-        <Link
-          href="/coverage"
-          className="inline-block px-5 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors"
-        >
-          Get Coverage &mdash; $20
-        </Link>
+        <div className="flex gap-3 justify-center">
+          <button
+            onClick={() => checkout('single')}
+            disabled={loading !== null}
+            className="inline-block px-5 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors disabled:opacity-50"
+          >
+            {loading === 'single' ? 'Redirecting...' : '1 Coverage — $20'}
+          </button>
+          <button
+            onClick={() => checkout('threePack')}
+            disabled={loading !== null}
+            className="inline-block px-5 py-2 bg-white text-[#111] border border-black/[0.12] text-[13px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+          >
+            {loading === 'threePack' ? 'Redirecting...' : '3-Pack — $30'}
+          </button>
+        </div>
       </div>
 
       {/* Billing toggle */}
@@ -89,12 +136,13 @@ export default function PricingPage() {
             )}
           </div>
 
-          <Link
-            href="/coverage"
-            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6"
+          <button
+            onClick={() => checkout(annual ? 'writerAnnual' : 'writerMonthly')}
+            disabled={loading !== null}
+            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
           >
-            Subscribe
-          </Link>
+            {loading === 'writerMonthly' || loading === 'writerAnnual' ? 'Redirecting...' : 'Subscribe'}
+          </button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
             <li className="flex gap-2">
@@ -155,12 +203,13 @@ export default function PricingPage() {
             )}
           </div>
 
-          <Link
-            href="/coverage"
-            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6"
+          <button
+            onClick={() => checkout(annual ? 'producerAnnual' : 'producerMonthly')}
+            disabled={loading !== null}
+            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
           >
-            Subscribe
-          </Link>
+            {loading === 'producerMonthly' || loading === 'producerAnnual' ? 'Redirecting...' : 'Subscribe'}
+          </button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
             <li className="flex gap-2">
@@ -214,12 +263,13 @@ export default function PricingPage() {
             )}
           </div>
 
-          <Link
-            href="/coverage"
-            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6"
+          <button
+            onClick={() => checkout(annual ? 'executiveAnnual' : 'executiveMonthly')}
+            disabled={loading !== null}
+            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
           >
-            Subscribe
-          </Link>
+            {loading === 'executiveMonthly' || loading === 'executiveAnnual' ? 'Redirecting...' : 'Subscribe'}
+          </button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
             <li className="flex gap-2">

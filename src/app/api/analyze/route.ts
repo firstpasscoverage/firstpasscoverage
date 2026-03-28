@@ -30,6 +30,7 @@ import {
   computeCalculatedScore,
 } from "@/lib/coverage-utils";
 import { validateScreenplay } from "@/lib/validate-screenplay";
+import { hasCredits, decrementCredit } from "@/lib/db/users";
 
 // Allow up to 5 minutes for the analysis to complete (requires Vercel Pro)
 export const maxDuration = 300;
@@ -96,6 +97,15 @@ export async function POST(request: NextRequest) {
     const email =
       clerkUser?.emailAddresses[0]?.emailAddress ?? "unknown";
     const dbUser = await getOrCreateUser(clerkId, email);
+
+  // ── Check coverage credits ───────────────────────────────────────
+  const userHasCredits = await hasCredits(dbUser.id);
+  if (!userHasCredits) {
+    return new Response(
+      JSON.stringify({ error: "No coverage credits available. Visit /pricing to purchase." }),
+      { status: 402, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
     // ── Parse the uploaded file ──────────────────────────────────────
     const formData = await request.formData();
@@ -277,6 +287,15 @@ export async function POST(request: NextRequest) {
             console.log(
               `Coverage saved for user ${dbUser.id}: "${parsed.scriptTitle}"`
             );
+
+            // Decrement one credit (subscription first, then purchased)
+            const credited = await decrementCredit(dbUser.id);
+            if (credited) {
+              console.log(`Credit decremented for user ${dbUser.id}`);
+            } else {
+              console.error(`Failed to decrement credit for user ${dbUser.id} — no credits found`);
+            }
+            
           } catch (saveErr) {
             // Don't break the response — user still has their coverage
             console.error(
