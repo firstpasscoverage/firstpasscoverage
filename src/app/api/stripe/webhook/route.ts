@@ -95,11 +95,18 @@ export async function POST(request: NextRequest) {
 
         const credits = TIER_CREDITS[tier]
 
+        // Period end: try subscription object first, fall back to invoice line items
+        const periodEndUnix = (subscription as any).current_period_end
+          || (invoice as any).lines?.data?.[0]?.period?.end
+        const periodEnd = periodEndUnix
+          ? new Date(periodEndUnix * 1000)
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // fallback: 30 days from now
+
         await updateSubscription(user.id, {
           subscriptionTier: tier,
           subscriptionStatus: subscription.status,
           stripeSubscriptionId: subscription.id,
-          subscriptionPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+          subscriptionPeriodEnd: periodEnd,
           subscriptionCredits: credits,
           subscriptionCreditsResetAt: new Date(),
         })
