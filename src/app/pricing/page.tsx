@@ -4,14 +4,14 @@ import { useState } from "react";
 
 // Map each button to its Stripe price ID
 const PRICES = {
-  single: ‘price_1TFiIs0Tj3dRfbGz5i8AfYNU’,           // Single Coverage — $20
-  threePack: ‘price_1TFiS90Tj3dRfbGzUaFeXYXI’,        // 3-Pack — $30
-  writerMonthly: ‘price_1TFiMo0Tj3dRfbGz1KWdec3U’,    // Writer Monthly
-  writerAnnual: ‘price_1TFiMo0Tj3dRfbGzYCh0TWAo’,     // Writer Annual
-  producerMonthly: ‘price_1TFiOT0Tj3dRfbGzBFhkenUs’,  // Producer Monthly
-  producerAnnual: ‘price_1TFiP80Tj3dRfbGz7sUmyPSV’,   // Producer Annual
-  executiveMonthly: ‘price_1TFiPk0Tj3dRfbGzBHbStVty’, // Executive Monthly
-  executiveAnnual: ‘price_1TFiQE0Tj3dRfbGzMqjOD8eq',  // Executive Annual
+  single: 'price_1TFiIs0Tj3dRfbGz5i8AfYNU',           // Single Coverage — $20
+  threePack: 'price_1TFiS90Tj3dRfbGzUaFeXYXI',        // 3-Pack — $30
+  writerMonthly: 'price_1TFiMo0Tj3dRfbGz1KWdec3U',    // Writer Monthly
+  writerAnnual: 'price_1TFiMo0Tj3dRfbGzYCh0TWAo',     // Writer Annual
+  producerMonthly: 'price_1TFiOT0Tj3dRfbGzBFhkenUs',  // Producer Monthly
+  producerAnnual: 'price_1TFiP80Tj3dRfbGz7sUmyPSV',   // Producer Annual
+  executiveMonthly: 'price_1TFiPk0Tj3dRfbGzBHbStVty', // Executive Monthly
+  executiveAnnual: 'price_1TFiQE0Tj3dRfbGzMqjOD8eq',  // Executive Annual
 };
 
 async function handleCheckout(priceId: string) {
