@@ -32,7 +32,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-[15px] font-medium text-[#111] mb-2">Contact</h2>
-          <p>Privacy questions: <a href="mailto:admin@firstpasscoverage.com" className="text-[#111] underline underline-offset-2 hover:opacity-70 transition-opacity">admin@firstpasscoverage.com</a></p>
+          <p>Privacy questions: <a href="mailto:contact@firstpasscoverage.com" className="text-[#111] underline underline-offset-2 hover:opacity-70 transition-opacity">contact@firstpasscoverage.com</a></p>
         </section>
       </div>
     </div>

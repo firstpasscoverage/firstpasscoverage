@@ -8,15 +8,15 @@ export default function ContactPage() {
 
         <p>
           <a
-            href="mailto:admin@firstpasscoverage.com"
+            href="mailto:contact@firstpasscoverage.com"
             className="text-[#111] underline underline-offset-2 hover:opacity-70 transition-opacity"
           >
-            admin@firstpasscoverage.com
+            contact@firstpasscoverage.com
           </a>
         </p>
 
         <p className="text-gray-400 text-xs pt-4">
-          First Pass Coverage is based in Los Angles, California.
+          First Pass Coverage is based in Los Angeles, California.
         </p>
       </div>
     </div>
