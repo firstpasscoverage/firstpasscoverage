@@ -128,12 +128,12 @@ export default function PricingPage() {
           />
         </button>
         <span
-          className={`text-[13px] font-medium ${annual ? "text-[#111]" : "text-gray-400"}`}
+          className={`text-[13px] font-medium whitespace-nowrap ${annual ? "text-[#111]" : "text-gray-400"}`}
         >
           Annual
         </span>
         {annual && (
-          <span className="text-[11px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-medium">
+          <span className="text-[11px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-medium ml-1">
             2 months free
           </span>
         )}
