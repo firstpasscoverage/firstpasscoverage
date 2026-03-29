@@ -108,7 +108,7 @@ export default function PricingPage() {
       </div>
 
       {/* Billing toggle */}
-      <div className="flex items-center justify-center gap-3 mb-10">
+      <div className="flex items-center justify-center gap-4 mb-10">
         <span
           className={`text-[13px] font-medium ${!annual ? "text-[#111]" : "text-gray-400"}`}
         >
@@ -116,7 +116,7 @@ export default function PricingPage() {
         </span>
         <button
           onClick={() => setAnnual(!annual)}
-          className={`relative w-11 h-[22px] rounded-full transition-colors ${
+          className={`relative w-11 h-[22px] rounded-full transition-colors shrink-0 ${
             annual ? "bg-[#111]" : "bg-gray-300"
           }`}
           aria-label="Toggle annual billing"
