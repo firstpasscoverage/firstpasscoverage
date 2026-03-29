@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Map each button to its Stripe price ID
 const PRICES = {
@@ -12,6 +12,15 @@ const PRICES = {
   producerAnnual: 'price_1TFiP80Tj3dRfbGz7sUmyPSV',   // Producer Annual
   executiveMonthly: 'price_1TFiPk0Tj3dRfbGzBHbStVty', // Executive Monthly
   executiveAnnual: 'price_1TFiQE0Tj3dRfbGzMqjOD8eq',  // Executive Annual
+  writerAddon: 'price_1TG6d00Tj3dRfbGzFnxU1qla',      // Writer 6-Pack — $30
+  producerAddon: 'price_1TG6dO0Tj3dRfbGzh4QuxshK',    // Producer 8-Pack — $30
+  executiveAddon: 'price_1TG6do0Tj3dRfbGzlX7TOjPw',   // Executive 10-Pack — $30
+};
+
+const ADDON_INFO: Record<string, { key: keyof typeof PRICES; credits: number; perCredit: string }> = {
+  writer:    { key: 'writerAddon',    credits: 6,  perCredit: '$5' },
+  producer:  { key: 'producerAddon',  credits: 8,  perCredit: '$3.75' },
+  executive: { key: 'executiveAddon', credits: 10, perCredit: '$3' },
 };
 
 async function handleCheckout(priceId: string) {
@@ -33,6 +42,22 @@ async function handleCheckout(priceId: string) {
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
+  const [userTier, setUserTier] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/user/credits')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.subscriptionTier) {
+          setUserTier(data.subscriptionTier);
+        }
+      })
+      .catch(() => {
+        // Not logged in or error — show non-subscriber view
+      });
+  }, []);
+
+  const isSubscriber = userTier !== null;
 
   const checkout = async (key: keyof typeof PRICES) => {
     setLoading(key);
@@ -70,13 +95,15 @@ export default function PricingPage() {
           >
             {loading === 'single' ? 'Redirecting...' : '1 Coverage — $20'}
           </button>
-          <button
-            onClick={() => checkout('threePack')}
-            disabled={loading !== null}
-            className="inline-block px-5 py-2 bg-white text-[#111] border border-black/[0.12] text-[13px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-          >
-            {loading === 'threePack' ? 'Redirecting...' : '3-Pack — $30'}
-          </button>
+          {!isSubscriber && (
+            <button
+              onClick={() => checkout('threePack')}
+              disabled={loading !== null}
+              className="inline-block px-5 py-2 bg-white text-[#111] border border-black/[0.12] text-[13px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+            >
+              {loading === 'threePack' ? 'Redirecting...' : '3-Pack — $30'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -141,7 +168,9 @@ export default function PricingPage() {
             disabled={loading !== null}
             className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
           >
-            {loading === 'writerMonthly' || loading === 'writerAnnual' ? 'Redirecting...' : 'Subscribe'}
+            {loading === 'writerMonthly' || loading === 'writerAnnual'
+              ? 'Redirecting...'
+              : userTier === 'writer' ? 'Current Plan' : 'Subscribe'}
           </button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
@@ -169,12 +198,29 @@ export default function PricingPage() {
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
               NEED MORE?
             </div>
-            <p className="text-[11px] text-gray-500">
-              $10/individual &middot; 5-pack for $20
-            </p>
-            <p className="text-[11px] text-gray-400 mt-1">
-              Purchased coverages don&apos;t expire.
-            </p>
+            {userTier === 'writer' ? (
+              <>
+                <button
+                  onClick={() => checkout('writerAddon')}
+                  disabled={loading !== null}
+                  className="inline-block px-4 py-1.5 bg-white text-[#111] border border-black/[0.12] text-[11px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  {loading === 'writerAddon' ? 'Redirecting...' : '6-Pack — $30'}
+                </button>
+                <p className="text-[11px] text-gray-400 mt-1.5">
+                  $5/coverage &middot; purchased credits don&apos;t expire
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[11px] text-gray-500">
+                  6-pack for $30 ($5/coverage)
+                </p>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Purchased coverages don&apos;t expire.
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -208,7 +254,9 @@ export default function PricingPage() {
             disabled={loading !== null}
             className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
           >
-            {loading === 'producerMonthly' || loading === 'producerAnnual' ? 'Redirecting...' : 'Subscribe'}
+            {loading === 'producerMonthly' || loading === 'producerAnnual'
+              ? 'Redirecting...'
+              : userTier === 'producer' ? 'Current Plan' : 'Subscribe'}
           </button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
@@ -232,12 +280,29 @@ export default function PricingPage() {
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
               NEED MORE?
             </div>
-            <p className="text-[11px] text-gray-500">
-              $10/individual &middot; 5-pack for $20 &middot; 25-pack for $100
-            </p>
-            <p className="text-[11px] text-gray-400 mt-1">
-              Purchased coverages don&apos;t expire.
-            </p>
+            {userTier === 'producer' ? (
+              <>
+                <button
+                  onClick={() => checkout('producerAddon')}
+                  disabled={loading !== null}
+                  className="inline-block px-4 py-1.5 bg-white text-[#111] border border-black/[0.12] text-[11px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  {loading === 'producerAddon' ? 'Redirecting...' : '8-Pack — $30'}
+                </button>
+                <p className="text-[11px] text-gray-400 mt-1.5">
+                  $3.75/coverage &middot; purchased credits don&apos;t expire
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[11px] text-gray-500">
+                  8-pack for $30 ($3.75/coverage)
+                </p>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Purchased coverages don&apos;t expire.
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -268,7 +333,9 @@ export default function PricingPage() {
             disabled={loading !== null}
             className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
           >
-            {loading === 'executiveMonthly' || loading === 'executiveAnnual' ? 'Redirecting...' : 'Subscribe'}
+            {loading === 'executiveMonthly' || loading === 'executiveAnnual'
+              ? 'Redirecting...'
+              : userTier === 'executive' ? 'Current Plan' : 'Subscribe'}
           </button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
@@ -292,12 +359,29 @@ export default function PricingPage() {
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
               NEED MORE?
             </div>
-            <p className="text-[11px] text-gray-500">
-              $10/individual &middot; 5-pack for $20 &middot; 25-pack for $100
-            </p>
-            <p className="text-[11px] text-gray-400 mt-1">
-              Purchased coverages don&apos;t expire.
-            </p>
+            {userTier === 'executive' ? (
+              <>
+                <button
+                  onClick={() => checkout('executiveAddon')}
+                  disabled={loading !== null}
+                  className="inline-block px-4 py-1.5 bg-white text-[#111] border border-black/[0.12] text-[11px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  {loading === 'executiveAddon' ? 'Redirecting...' : '10-Pack — $30'}
+                </button>
+                <p className="text-[11px] text-gray-400 mt-1.5">
+                  $3/coverage &middot; purchased credits don&apos;t expire
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[11px] text-gray-500">
+                  10-pack for $30 ($3/coverage)
+                </p>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Purchased coverages don&apos;t expire.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -312,8 +396,9 @@ export default function PricingPage() {
             Each plan includes a monthly allotment of coverages. Monthly credits
             refresh at the start of each billing cycle and do not roll over. If
             you need more than your plan includes in a given month, additional
-            coverages are available at subscriber-only pricing &mdash;
-            individually or in bundles. Purchased add-on coverages do not expire.
+            coverages are available at a subscriber-only rate of $30 per pack &mdash;
+            the number of coverages per pack scales with your tier.
+            Purchased add-on coverages do not expire.
           </p>
         </div>
 

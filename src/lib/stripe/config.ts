@@ -7,6 +7,16 @@
 export const ONE_OFF_CREDITS: Record<string, number> = {
   'price_1TFiIs0Tj3dRfbGz5i8AfYNU': 1,   // Single Coverage — $20
   'price_1TFiS90Tj3dRfbGzUaFeXYXI': 3,   // 3-Pack — $30
+  'price_1TG6d00Tj3dRfbGzFnxU1qla': 6,   // Writer Add-on 6-Pack — $30
+  'price_1TG6dO0Tj3dRfbGzh4QuxshK': 8,   // Producer Add-on 8-Pack — $30
+  'price_1TG6do0Tj3dRfbGzlX7TOjPw': 10,  // Executive Add-on 10-Pack — $30
+}
+
+// Subscriber add-on packs: tier → { priceId, credits, label }
+export const TIER_ADDON_PACKS: Record<string, { priceId: string; credits: number; label: string }> = {
+  writer:    { priceId: 'price_1TG6d00Tj3dRfbGzFnxU1qla', credits: 6,  label: '6-Pack — $30' },
+  producer:  { priceId: 'price_1TG6dO0Tj3dRfbGzh4QuxshK', credits: 8,  label: '8-Pack — $30' },
+  executive: { priceId: 'price_1TG6do0Tj3dRfbGzlX7TOjPw', credits: 10, label: '10-Pack — $30' },
 }
 
 // Subscription prices: price ID → tier name
