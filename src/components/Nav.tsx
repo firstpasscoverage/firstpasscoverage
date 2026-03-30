@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 const NAV_LINKS = [
   { href: "/library", label: "Library" },
@@ -15,6 +16,8 @@ const NAV_LINKS = [
 export default function Nav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useUser();
+  const isAdmin = user?.id === process.env.NEXT_PUBLIC_ADMIN_CLERK_USER_ID;
 
   return (
     <nav className="border-b border-black/[0.08]">
@@ -43,6 +46,18 @@ export default function Nav() {
               {label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              href="/admin/samples"
+              className={`text-[13px] transition-colors ${
+                pathname.startsWith("/admin")
+                  ? "text-[#111] font-medium"
+                  : "text-amber-600 hover:text-amber-800"
+              }`}
+            >
+              Admin
+            </Link>
+          )}
           <Link
             href="/coverage"
             className="px-[18px] py-[7px] bg-[#111] text-[#fafafa] text-[13px] rounded-md hover:bg-[#333] transition-colors"
@@ -94,6 +109,19 @@ export default function Nav() {
                 {label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                href="/admin/samples"
+                onClick={() => setMenuOpen(false)}
+                className={`text-[15px] transition-colors ${
+                  pathname.startsWith("/admin")
+                    ? "text-[#111] font-medium"
+                    : "text-amber-600 hover:text-amber-800"
+                }`}
+              >
+                Admin
+              </Link>
+            )}
             <Link
               href="/coverage"
               onClick={() => setMenuOpen(false)}
