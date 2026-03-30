@@ -6,6 +6,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
+import FormattedCoverage from "@/components/FormattedCoverage";
 
 // ── Score parsing ────────────────────────────────────────────────────
 
@@ -254,23 +255,17 @@ export default function CoverageDetailClient({
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         {coverageSplit && scores.categories.length > 0 ? (
           <>
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-              {coverageSplit.beforeMetadata}
-            </pre>
+            <FormattedCoverage text={coverageSplit.beforeMetadata} />
 
             <RatingsGrid
               categories={scores.categories}
               overall={scores.overall}
             />
 
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-              {coverageSplit.afterMetadata}
-            </pre>
+            <FormattedCoverage text={coverageSplit.afterMetadata} />
           </>
         ) : (
-          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-            {coverageText}
-          </pre>
+          <FormattedCoverage text={coverageText} />
         )}
       </div>
     </div>

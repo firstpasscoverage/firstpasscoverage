@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
+import FormattedCoverage from "@/components/FormattedCoverage";
 
 type Status = "idle" | "uploading" | "extracting" | "analyzing" | "scoring" | "done" | "error";
 
@@ -571,18 +572,14 @@ export default function CoveragePage() {
           >
             {status === "done" && coverageSplit && scores.categories.length > 0 ? (
               <>
-                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-                  {coverageSplit.beforeMetadata}
-                </pre>
+                <FormattedCoverage text={coverageSplit.beforeMetadata} />
 
                 <RatingsGrid
                   categories={scores.categories}
                   overall={scores.overall}
                 />
 
-                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">
-                  {coverageSplit.afterMetadata}
-                </pre>
+                <FormattedCoverage text={coverageSplit.afterMetadata} />
               </>
             ) : (
               <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-gray-800">

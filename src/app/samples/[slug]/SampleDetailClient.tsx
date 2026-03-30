@@ -2,42 +2,15 @@
 // Client component for rendering a sample coverage — public, no auth required.
 // Adapted from library's CoverageDetailClient: adds poster header, CTA,
 // removes clipboard copy (user tool, not marketing tool).
-// Uses react-markdown for formatted coverage text rendering.
 
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
+import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage";
 
-// ── Date formatting ──────────────────────────────────────────────────
-
-/**
- * Reformat dates like "12th August 2024" or "3rd March 2025"
- * into "August 12, 2024" format. Returns the original string
- * if it doesn't match the pattern.
- */
-function reformatDate(dateStr: string): string {
-  const match = dateStr.match(
-    /^(\d{1,2})(?:st|nd|rd|th)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})$/i
-  );
-  if (!match) return dateStr;
-  return `${match[2]} ${parseInt(match[1])}, ${match[3]}`;
-}
-
-/**
- * Find and replace ordinal-style dates within a block of text.
- * e.g. "Draft date: 12th August 2024" → "Draft date: August 12, 2024"
- */
-function reformatDatesInText(text: string): string {
-  return text.replace(
-    /(\d{1,2})(?:st|nd|rd|th)\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})/gi,
-    (_match, day, month, year) => `${month} ${parseInt(day)}, ${year}`
-  );
-}
-
-// ── Score parsing (identical to CoverageDetailClient) ────────────────
+// ── Score parsing ────────────────────────────────────────────────────
 
 interface ParsedScores {
   categories: { name: string; score: number }[];
@@ -66,7 +39,7 @@ function parseScores(text: string): ParsedScores {
   return { categories, overall };
 }
 
-// ── Ratings grid (identical to CoverageDetailClient) ─────────────────
+// ── Ratings grid ─────────────────────────────────────────────────────
 
 const CATEGORY_COLUMNS = ["Very Poor", "Poor", "Fair", "Good", "Excellent"];
 const OVERALL_COLUMNS = [
@@ -151,90 +124,6 @@ function RatingsGrid({ categories, overall }: ParsedScores) {
           </tbody>
         </table>
       )}
-    </div>
-  );
-}
-
-// ── Formatted coverage text ──────────────────────────────────────────
-
-/**
- * Renders coverage markdown as formatted HTML.
- * Strips the score heading lines (e.g. "PREMISE — Good (4)") since
- * those are already represented in the ratings grid.
- */
-function FormattedCoverage({ text }: { text: string }) {
-  // Transform score heading lines (e.g. "PREMISE — Good (4)") into markdown
-  // section headers that preserve the rating label but drop the numeric score.
-  // e.g. "PREMISE — Good (4)" becomes "### PREMISE — Good"
-  const cleaned = text
-    .split("\n")
-    .map((line) => {
-      const match = line.match(
-        /^(PREMISE|STRUCTURE|CHARACTER|CONFLICT|DIALOGUE|PACING|TONE|ORIGINALITY|LOGIC|CRAFT|OVERALL)\s*[—–-]\s*(.+?)\s*\(\d\)/
-      );
-      if (match) return `### ${match[1]} — ${match[2]}`;
-      return line;
-    })
-    .join("\n");
-
-  // Reformat ordinal dates ("12th August 2024" → "August 12, 2024")
-  const dated = reformatDatesInText(cleaned);
-
-  // Normalize single newlines to double newlines so markdown treats each
-  // line as a separate paragraph. The coverage text uses single \n between
-  // metadata fields (Title, Written by, Genre, etc.) which markdown would
-  // otherwise collapse into one run-on paragraph.
-  // First collapse any runs of 3+ newlines to 2, then upgrade singles to doubles.
-  const normalized = dated
-    .replace(/\n{3,}/g, "\n\n")
-    .replace(/(?<!\n)\n(?!\n)/g, "\n\n");
-
-  return (
-    <div className="prose prose-sm prose-gray max-w-none">
-      <ReactMarkdown
-        components={{
-          // Section headers (### PREMISE, ### LOGLINE, etc.)
-          h3: ({ children }) => (
-            <h3 className="text-sm font-bold uppercase tracking-wide text-gray-700 mt-6 mb-2">
-              {children}
-            </h3>
-          ),
-          h2: ({ children }) => (
-            <h2 className="text-base font-bold uppercase tracking-wide text-gray-700 mt-8 mb-3">
-              {children}
-            </h2>
-          ),
-          // Paragraphs
-          p: ({ children }) => (
-            <p className="text-sm leading-relaxed text-gray-800 mb-3">
-              {children}
-            </p>
-          ),
-          // Bold text (used for metadata keys like **Title:** etc.)
-          strong: ({ children }) => (
-            <strong className="font-semibold text-gray-700">{children}</strong>
-          ),
-          // Emphasis
-          em: ({ children }) => (
-            <em className="italic text-gray-600">{children}</em>
-          ),
-          // Horizontal rules (if present between sections)
-          hr: () => <hr className="my-6 border-gray-200" />,
-          // Lists (occasionally used in commentary)
-          ul: ({ children }) => (
-            <ul className="list-disc list-inside text-sm text-gray-800 mb-3 space-y-1">
-              {children}
-            </ul>
-          ),
-          ol: ({ children }) => (
-            <ol className="list-decimal list-inside text-sm text-gray-800 mb-3 space-y-1">
-              {children}
-            </ol>
-          ),
-        }}
-      >
-        {normalized}
-      </ReactMarkdown>
     </div>
   );
 }
