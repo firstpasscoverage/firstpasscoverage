@@ -64,7 +64,7 @@ function SampleCard({ sample }: { sample: Sample }) {
       </div>
       {/* Title and writer */}
       <h3 className="text-sm font-medium text-[#111] truncate group-hover:underline">
-        {sample.title ?? 'Untitled'}
+        {(sample.title ?? 'Untitled').toUpperCase()}
       </h3>
       <p className="text-xs text-gray-500 truncate">
         {sample.writer ?? 'Unknown writer'}

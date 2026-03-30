@@ -66,7 +66,7 @@ export default async function LibraryPage() {
                 <div className="flex justify-between items-start gap-4">
                   <div className="min-w-0">
                     <h2 className="text-lg font-semibold truncate">
-                      {c.title || "Untitled"}
+                      {(c.title || "Untitled").toUpperCase()}
                     </h2>
                     <p className="text-gray-500 text-sm mt-0.5">
                       {c.writer || "Unknown writer"}

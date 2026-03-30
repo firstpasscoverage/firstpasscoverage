@@ -6,7 +6,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
-import FormattedCoverage from "@/components/FormattedCoverage";
+import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage";
 
 // ── Score parsing ────────────────────────────────────────────────────
 
@@ -219,12 +219,12 @@ export default function CoverageDetailClient({
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-2xl font-brand mb-1">
-            {title || "Untitled"}
+            {(title || "Untitled").toUpperCase()}
           </h1>
           <p className="text-gray-500 text-sm">
             {writer || "Unknown writer"}
             {draftDate && draftDate !== "Not specified"
-              ? ` \u2022 ${draftDate}`
+              ? ` \u2022 ${reformatDate(draftDate)}`
               : ""}
           </p>
           {dateStr && (

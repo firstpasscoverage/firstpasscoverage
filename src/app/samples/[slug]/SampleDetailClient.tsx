@@ -292,7 +292,7 @@ export default function SampleDetailClient({
         )}
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-brand mb-1">
-            {title || "Untitled"}
+            {(title || "Untitled").toUpperCase()}
             {releaseYear && (
               <span className="text-gray-400 font-normal ml-2">
                 ({releaseYear})
