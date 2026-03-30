@@ -18,7 +18,7 @@ interface Sample {
   logline: string | null
   coverageText: string | null
   categoryScores: unknown
-  createdAt: string
+  createdAt: Date
   tmdbId: number | null
   posterPath: string | null
   slug: string
