@@ -41,5 +41,18 @@ export const coverages = pgTable('coverages', {
   promptVersion: text('prompt_version'),
   screenplayBlobUrl: text('screenplay_blob_url'),
   coveragePdfBlobUrl: text('coverage_pdf_blob_url'),
+  isSample: boolean('is_sample').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
+
+export const sampleMetadata = pgTable('sample_metadata', {
+  id: serial('id').primaryKey(),
+  coverageId: integer('coverage_id').notNull().references(() => coverages.id).unique(),
+  tmdbId: integer('tmdb_id'),
+  posterPath: text('poster_path'),             // TMDB relative path, e.g. "/abc123.jpg"
+  slug: text('slug').notNull().unique(),       // URL-friendly identifier, e.g. "sinners"
+  displayGenre: text('display_genre'),         // Clean genre label for grid grouping (e.g. "Drama", "Thriller")
+  releaseYear: integer('release_year'),
+  displayOrder: integer('display_order').notNull().default(0),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
