@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Libre_Baskerville } from "next/font/google";
+import { Libre_Baskerville, Geist } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const libre = Libre_Baskerville({
   subsets: ["latin"],
@@ -31,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={libre.variable}>
+    <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className="bg-[#fafafa] text-[#111] antialiased">
         <ClerkProvider>
         <Nav />
