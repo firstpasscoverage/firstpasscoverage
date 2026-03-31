@@ -9,6 +9,7 @@ import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import RecommendationBadge from "@/components/RecommendationBadge";
 import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage";
 
 // ── Score parsing ────────────────────────────────────────────────────
@@ -126,29 +127,6 @@ function RatingsGrid({ categories, overall }: ParsedScores) {
         </table>
       )}
     </div>
-  );
-}
-
-// ── Recommendation badge ─────────────────────────────────────────────
-
-const RECOMMENDATION_COLORS: Record<string, string> = {
-  "Strong Pass": "bg-red-50 text-red-700 border-red-200",
-  Pass: "bg-orange-50 text-orange-700 border-orange-200",
-  Consider: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  Recommend: "bg-green-50 text-green-700 border-green-200",
-  "Strong Recommend": "bg-emerald-50 text-emerald-700 border-emerald-200",
-};
-
-function RecommendationBadge({ recommendation }: { recommendation: string }) {
-  const colors =
-    RECOMMENDATION_COLORS[recommendation] ??
-    "bg-gray-50 text-gray-700 border-gray-200";
-  return (
-    <span
-      className={`inline-block px-3 py-1 text-sm font-semibold rounded-full border ${colors}`}
-    >
-      {recommendation}
-    </span>
   );
 }
 

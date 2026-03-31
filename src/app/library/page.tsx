@@ -7,14 +7,7 @@ import { getUserByClerkId } from "@/lib/db/users";
 import { getCoveragesForUser } from "@/lib/db/coverages";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-const OVERALL_COLORS: Record<string, string> = {
-  "Strong Recommend": "bg-emerald-100 text-emerald-800",
-  Recommend: "bg-teal-100 text-teal-800",
-  Consider: "bg-amber-100 text-amber-800",
-  Pass: "bg-orange-100 text-orange-800",
-  "Strong Pass": "bg-red-100 text-red-800",
-};
+import RecommendationBadge from "@/components/RecommendationBadge";
 
 export default async function LibraryPage() {
   const { userId: clerkId } = await auth();
@@ -44,9 +37,6 @@ export default async function LibraryPage() {
       ) : (
         <div className="space-y-3">
           {coverageList.map((c) => {
-            const colorClass =
-              OVERALL_COLORS[c.recommendation ?? ""] ??
-              "bg-gray-100 text-gray-700";
             const dateStr = c.createdAt
               ? new Date(c.createdAt).toLocaleDateString("en-US", {
                   month: "short",
@@ -76,11 +66,7 @@ export default async function LibraryPage() {
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${colorClass}`}
-                    >
-                      {c.recommendation || "Pending"}
-                    </span>
+                  <RecommendationBadge recommendation={c.recommendation || "Pending"} />
                     <p className="text-gray-400 text-xs mt-2">{dateStr}</p>
                   </div>
                 </div>
