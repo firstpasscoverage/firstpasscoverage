@@ -3,11 +3,12 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import RatingsGrid, { parseScores, splitCoverageAtMetadata } from "@/components/RatingsGrid";
 import FormattedCoverage from "@/components/FormattedCoverage";
 
 type Status = "idle" | "uploading" | "extracting" | "analyzing" | "scoring" | "done" | "error";
 
-// ── Score label mappings ─────────────────────────────────────────────
+// ── Score label mappings (used by mergeScoresIntoHeadings) ───────────
 
 const CATEGORY_SCORE_LABELS: Record<number, string> = {
   1: "Very Poor", 2: "Poor", 3: "Fair", 4: "Good", 5: "Excellent",
@@ -32,7 +33,6 @@ function mergeScoresIntoHeadings(
   for (const cat of categories) {
     if (scores[cat]) {
       const label = CATEGORY_SCORE_LABELS[scores[cat]] || "";
-      // Replace standalone heading line with scored heading
       result = result.replace(
         new RegExp(`^${cat}$`, "m"),
         `${cat} — ${label} (${scores[cat]})`
@@ -49,116 +49,6 @@ function mergeScoresIntoHeadings(
   }
 
   return result;
-}
-
-// ── Score parsing (from merged text, for ratings grid) ───────────────
-
-interface ParsedScores {
-  categories: { name: string; score: number }[];
-  overall: number | null;
-}
-
-function parseScores(text: string): ParsedScores {
-  const categories: { name: string; score: number }[] = [];
-  let overall: number | null = null;
-
-  for (const line of text.split("\n")) {
-    const match = line.match(
-      /^(PREMISE|STRUCTURE|CHARACTER|CONFLICT|DIALOGUE|PACING|TONE|ORIGINALITY|LOGIC|CRAFT|OVERALL)\s*[—–-]\s*.+?\((\d)\)/
-    );
-    if (match) {
-      const [, name, scoreStr] = match;
-      const score = parseInt(scoreStr);
-      if (name === "OVERALL") {
-        overall = score;
-      } else {
-        categories.push({ name, score });
-      }
-    }
-  }
-
-  return { categories, overall };
-}
-
-// ── Ratings grid component ───────────────────────────────────────────
-
-const CATEGORY_COLUMNS = ["Very Poor", "Poor", "Fair", "Good", "Excellent"];
-const OVERALL_COLUMNS = ["Strong Pass", "Pass", "Consider", "Recommend", "Strong Recommend"];
-
-function RatingsGrid({ categories, overall }: ParsedScores) {
-  if (categories.length === 0) return null;
-
-  return (
-    <div className="my-6 py-4 border-t border-b border-gray-200">
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr>
-            <th className="w-28" />
-            {CATEGORY_COLUMNS.map((col) => (
-              <th
-                key={col}
-                className="py-2 px-1 font-semibold text-gray-400 text-center text-[10px] uppercase tracking-wider"
-              >
-                {col}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map(({ name, score }) => (
-            <tr key={name}>
-              <td className="py-1 pr-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">
-                {name}
-              </td>
-              {[1, 2, 3, 4, 5].map((val) => (
-                <td key={val} className="py-1 px-1 text-center">
-                  {val === score ? (
-                    <span className="text-gray-700 font-semibold">✓</span>
-                  ) : (
-                    ""
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {overall !== null && (
-        <table className="w-full text-sm border-collapse mt-4">
-          <thead>
-            <tr>
-              <th className="w-28" />
-              {OVERALL_COLUMNS.map((col) => (
-                <th
-                  key={col}
-                  className="py-2 px-1 font-semibold text-gray-400 text-center text-[10px] uppercase tracking-wider"
-                >
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="py-1 pr-3 font-bold text-gray-700 text-xs uppercase tracking-wide">
-                Overall
-              </td>
-              {[1, 2, 3, 4, 5].map((val) => (
-                <td key={val} className="py-1 px-1 text-center">
-                  {val === overall ? (
-                    <span className="text-gray-700 font-bold text-base">✓</span>
-                  ) : (
-                    ""
-                  )}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
 }
 
 // ── Main page component ──────────────────────────────────────────────
@@ -237,17 +127,7 @@ export default function CoveragePage() {
   );
 
   const scores = useMemo(() => parseScores(coverage), [coverage]);
-
-  const coverageSplit = useMemo(() => {
-    if (!coverage) return null;
-    let splitIndex = coverage.indexOf("\nGenre:");
-    if (splitIndex === -1) splitIndex = coverage.indexOf("\n**Genre:");
-    if (splitIndex === -1) return null;
-    return {
-      beforeMetadata: coverage.slice(0, splitIndex),
-      afterMetadata: coverage.slice(splitIndex),
-    };
-  }, [coverage]);
+  const coverageSplit = useMemo(() => splitCoverageAtMetadata(coverage), [coverage]);
 
   const handleDownloadPDF = useCallback(async () => {
     if (!coverage || pdfBusy) return;
@@ -366,7 +246,6 @@ export default function CoveragePage() {
           setCoverage(cleanText);
         } catch (parseErr) {
           console.error("Failed to parse Pass 2 scores:", parseErr);
-          // Fall through — coverage displays without scores
         }
       }
 
@@ -374,7 +253,6 @@ export default function CoveragePage() {
       const errorMatch = rawText.match(/<!--FPC_SCORES_ERROR:(.*?)-->/);
       if (errorMatch) {
         console.warn("Pass 2 scoring failed:", errorMatch[1]);
-        // Strip markers, show analysis without scores
         const cleanText = rawText
           .replace(/\n?<!--FPC_SCORING-->/, "")
           .replace(/\n?<!--FPC_SCORES_ERROR:.*?-->/, "")
@@ -383,7 +261,7 @@ export default function CoveragePage() {
       }
 
       setStatus("done");
-      fetchCredits(); // Refresh credit balance after use
+      fetchCredits();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
