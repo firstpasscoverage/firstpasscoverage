@@ -34,8 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className="bg-[#fafafa] text-[#111] antialiased">
+    <html lang="en" className={cn("font-sans", geist.variable, libre.variable)}>
+      <body className="antialiased">
         <ClerkProvider>
         <Nav />
         <main className="min-h-[calc(100vh-140px)]">{children}</main>

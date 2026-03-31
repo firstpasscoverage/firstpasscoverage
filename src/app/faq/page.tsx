@@ -67,7 +67,7 @@ const PRICING_FAQ = {
 export default function FAQPage() {
   return (
     <div className="max-w-[640px] mx-auto px-6 py-12">
-      <h1 className="font-brand text-2xl font-normal mb-2">
+      <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-2">
         Frequently Asked Questions
       </h1>
       <p className="text-gray-500 text-sm mb-10">

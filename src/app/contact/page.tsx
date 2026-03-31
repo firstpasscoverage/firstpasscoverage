@@ -1,7 +1,7 @@
 export default function ContactPage() {
   return (
     <div className="max-w-[640px] mx-auto px-6 py-12">
-      <h1 className="font-brand text-2xl font-normal mb-6">Contact</h1>
+      <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-6">Contact</h1>
 
       <div className="space-y-5 text-sm text-gray-600 leading-relaxed">
         <p>For questions, feedback, support, or partnership inquiries:</p>

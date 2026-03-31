@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { Button } from "@/components/ui/button";
 
 // ---------- Types ----------
 
@@ -316,14 +317,14 @@ export default function AdminSamplesClient() {
                     </button>
                   </>
                 ) : (
-                  <button
+                  <Button
+                    size="sm"
                     onClick={() =>
                       expandedId === coverage.id ? closeForm() : openForm(coverage)
                     }
-                    className="text-sm bg-[#111] text-[#fafafa] px-3 py-1.5 rounded hover:bg-[#333] transition-colors"
                   >
                     {expandedId === coverage.id ? 'Cancel' : 'Feature as Sample'}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -346,13 +347,9 @@ export default function AdminSamplesClient() {
                         placeholder="Search movie title…"
                         className="flex-1 border border-black/[0.08] rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#111]"
                       />
-                      <button
-                        onClick={handleTmdbSearch}
-                        disabled={tmdbSearching}
-                        className="bg-[#111] text-[#fafafa] px-4 py-2 rounded text-sm hover:bg-[#333] transition-colors disabled:opacity-50"
-                      >
+                      <Button size="sm" onClick={handleTmdbSearch} disabled={tmdbSearching}>
                         {tmdbSearching ? 'Searching…' : 'Search'}
-                      </button>
+                      </Button>
                     </div>
 
                     {/* TMDB results */}
@@ -468,17 +465,18 @@ export default function AdminSamplesClient() {
                       </div>
                     </div>
 
-                    <button
+                    <Button
+                      size="lg"
+                      className="w-full"
                       onClick={() => handleSave(coverage)}
                       disabled={saving || !formSlug}
-                      className="w-full bg-[#111] text-[#fafafa] px-4 py-2.5 rounded text-sm font-medium hover:bg-[#333] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {saving
                         ? 'Saving…'
                         : coverage.isSample
                           ? 'Update Sample'
                           : 'Save as Sample'}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

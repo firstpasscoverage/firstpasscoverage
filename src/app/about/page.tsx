@@ -1,7 +1,7 @@
 export default function AboutPage() {
   return (
     <div className="max-w-[640px] mx-auto px-6 py-12">
-      <h1 className="font-brand text-2xl font-normal mb-6">
+      <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-6">
         About First Pass Coverage
       </h1>
 
@@ -46,7 +46,7 @@ export default function AboutPage() {
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-200">
-        <h2 className="font-brand text-lg font-normal text-[#111] mb-3">
+        <h2 className="font-brand text-2x1 font-normal tracking-[-0.3px] mb-3">
           Get in touch
         </h2>
         <p className="text-sm text-gray-600">

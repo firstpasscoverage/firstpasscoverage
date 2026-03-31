@@ -20,7 +20,7 @@ export default async function AdminSamplesPage() {
     <div className="min-h-screen bg-[#fafafa]">
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="mb-8">
-          <h1 className="font-brand text-3xl font-bold text-[#111] mb-2">
+          <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-2">
             Sample Management
           </h1>
           <p className="text-gray-500 text-sm">

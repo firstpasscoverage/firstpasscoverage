@@ -19,7 +19,7 @@ export default async function SamplesPage() {
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="font-brand text-4xl font-bold text-[#111] mb-3">
+          <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-3">
             Sample Coverages
           </h1>
           <p className="text-gray-500 text-lg max-w-2xl">

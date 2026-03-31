@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -6,12 +7,12 @@ export default function Home() {
       {/* Hero */}
       <section className="pt-20 pb-16 text-center">
         <div className="max-w-[600px] mx-auto px-6">
-          <h1 className="font-brand text-[32px] font-normal text-[#111] leading-[1.3] tracking-[-0.5px] mb-4">
+          <h1 className="font-brand text-[32px] font-normal text-foreground leading-[1.3] tracking-[-0.5px] mb-4">
             Know where your script stands &mdash;
             <br />
             in three minutes, for $20.
           </h1>
-          <p className="text-[15px] text-gray-500 leading-relaxed mb-8">
+          <p className="text-[15px] text-muted-foreground leading-relaxed mb-8">
             Upload your screenplay. Get detailed, calibrated coverage across ten
             rated categories with page-specific citations. Designed by industry
             professionals who&apos;ve evaluated thousands of scripts.
@@ -23,12 +24,9 @@ export default function Home() {
             </p>
           </div>
 
-          <Link
-            href="/coverage"
-            className="inline-block px-7 py-2.5 bg-[#111] text-[#fafafa] text-sm font-medium rounded-md hover:bg-[#333] transition-colors"
-          >
-            Get Coverage
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/coverage">Get Coverage</Link>
+          </Button>
           <p className="text-xs text-gray-400 mt-3.5">
             PDF format · 4MB max · Coverage in about 3 minutes
           </p>
@@ -41,7 +39,7 @@ export default function Home() {
       {/* The Problem */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-2xl font-normal text-[#111] tracking-[-0.3px] mb-6">
+          <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-6">
             Coverage shouldn&apos;t be a luxury.
           </h2>
           <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
@@ -71,63 +69,63 @@ export default function Home() {
       {/* What You Get */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-2xl font-normal text-[#111] text-center tracking-[-0.3px] mb-10">
+          <h2 className="font-brand text-2xl font-normal text-foreground text-center tracking-[-0.3px] mb-10">
             What every coverage includes
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-6">
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-1">
+              <div className="text-[13px] font-medium text-foreground mb-1">
                 Logline
               </div>
-              <div className="text-[12.5px] text-gray-500 leading-relaxed">
+              <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 A distilled premise statement that captures the core dramatic
                 question &mdash; the version you&apos;d pitch in a room.
               </div>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-1">
+              <div className="text-[13px] font-medium text-foreground mb-1">
                 Synopsis
               </div>
-              <div className="text-[12.5px] text-gray-500 leading-relaxed">
+              <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 A comprehensive, chronological summary that tracks every major
                 beat from setup through resolution. Characters introduced in ALL
                 CAPS with age and description.
               </div>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-1">
+              <div className="text-[13px] font-medium text-foreground mb-1">
                 10 rated categories
               </div>
-              <div className="text-[12.5px] text-gray-500 leading-relaxed">
+              <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 Premise, structure, character, conflict, dialogue, pacing, tone,
                 originality, logic, and craft &mdash; each rated 1&ndash;5 with
                 a paragraph of analysis citing specific pages and scenes.
               </div>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-1">
+              <div className="text-[13px] font-medium text-foreground mb-1">
                 Overall recommendation
               </div>
-              <div className="text-[12.5px] text-gray-500 leading-relaxed">
+              <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 Strong Pass through Strong Recommend, with a summative paragraph
                 identifying the material&apos;s strongest and weakest elements.
               </div>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-1">
+              <div className="text-[13px] font-medium text-foreground mb-1">
                 Production metadata
               </div>
-              <div className="text-[12.5px] text-gray-500 leading-relaxed">
+              <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 Genre, budget tier, MPA rating, comps, locations, lead
                 description, and more. Everything a producer needs to decide
                 whether to read further.
               </div>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-1">
+              <div className="text-[13px] font-medium text-foreground mb-1">
                 Downloadable PDF
               </div>
-              <div className="text-[12.5px] text-gray-500 leading-relaxed">
+              <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 Professional coverage document suitable for development files,
                 submission packages, or sharing with collaborators.
               </div>
@@ -142,12 +140,12 @@ export default function Home() {
       {/* Why First Pass */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-2xl font-normal text-[#111] tracking-[-0.3px] mb-8">
+          <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-8">
             Why this coverage is different
           </h2>
           <div className="space-y-8">
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-2">
+              <div className="text-[13px] font-medium text-foreground mb-2">
                 Built on industry methodology
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -163,7 +161,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-2">
+              <div className="text-[13px] font-medium text-foreground mb-2">
                 Honest ratings, not flattering ratings
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -178,7 +176,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-2">
+              <div className="text-[13px] font-medium text-foreground mb-2">
                 Coverage you can afford to use more than once
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -192,7 +190,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="text-[13px] font-medium text-[#111] mb-2">
+              <div className="text-[13px] font-medium text-foreground mb-2">
                 Your script stays yours
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -212,10 +210,10 @@ export default function Home() {
       {/* Credibility */}
       <section className="py-12 pb-20">
         <div className="max-w-[640px] mx-auto px-6 text-center">
-          <h2 className="font-brand text-2xl font-normal text-[#111] tracking-[-0.3px] mb-3">
+          <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-3">
             Built by people who read scripts for a living.
           </h2>
-          <p className="text-sm text-gray-500 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             First Pass Coverage was designed by development professionals with
             experience at major talent agencies and in literary management
             &mdash; people who&apos;ve spent careers reading, evaluating, and

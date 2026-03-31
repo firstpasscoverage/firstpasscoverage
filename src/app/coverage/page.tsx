@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import FormattedCoverage from "@/components/FormattedCoverage";
 
 type Status = "idle" | "uploading" | "extracting" | "analyzing" | "scoring" | "done" | "error";
@@ -401,7 +402,7 @@ export default function CoveragePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
-      <h1 className="font-brand text-2xl font-normal mb-1">Get Coverage</h1>
+      <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-1">Get Coverage</h1>
       <p className="text-gray-500 text-sm mb-4">
         Upload a screenplay PDF to generate professional coverage.
       </p>
@@ -430,12 +431,9 @@ export default function CoveragePage() {
               <p className="text-[12.5px] text-gray-500 mb-3">
                 Purchase a single coverage or subscribe for monthly credits.
               </p>
-              <Link
-                href="/pricing"
-                className="inline-block px-5 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors"
-              >
-                View Pricing
-              </Link>
+              <Button asChild size="lg">
+                <Link href="/pricing">View Pricing</Link>
+              </Button>
             </div>
           )}
         </div>
@@ -492,28 +490,14 @@ export default function CoveragePage() {
           {error && <p className="mt-3 text-red-600 text-sm">{error}</p>}
 
           <div className="mt-4 flex gap-3">
-            <button
-              onClick={analyze}
-              disabled={!file}
-              className={`
-                px-6 py-2.5 rounded-lg font-medium text-sm transition-colors
-                ${
-                  file
-                    ? "bg-[#111] text-white hover:bg-[#333]"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }
-              `}
-            >
+          <Button size="lg" onClick={analyze} disabled={!file}>
               Analyze Screenplay
-            </button>
+            </Button>
 
             {file && (
-              <button
-                onClick={reset}
-                className="px-4 py-2.5 rounded-lg text-sm text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                Clear
-              </button>
+              <Button variant="ghost" onClick={reset}>
+              Clear
+            </Button>
             )}
           </div>
         </div>
@@ -541,27 +525,15 @@ export default function CoveragePage() {
             <h2 className="text-lg font-semibold">Coverage</h2>
             {status === "done" && (
               <div className="flex gap-2">
-                <button
-                  onClick={handleDownloadPDF}
-                  disabled={pdfBusy}
-                  className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors disabled:opacity-50"
-                >
+                <Button variant="secondary" size="sm" onClick={handleDownloadPDF} disabled={pdfBusy}>
                   {pdfBusy ? "Generating..." : "Download PDF"}
-                </button>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(coverage);
-                  }}
-                  className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-                >
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => navigator.clipboard.writeText(coverage)}>
                   Copy to clipboard
-                </button>
-                <button
-                  onClick={reset}
-                  className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-                >
+                </Button>
+                <Button variant="secondary" size="sm" onClick={reset}>
                   Analyze another
-                </button>
+                </Button>
               </div>
             )}
           </div>

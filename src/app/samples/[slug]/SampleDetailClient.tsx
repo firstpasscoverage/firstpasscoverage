@@ -8,6 +8,7 @@
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage";
 
 // ── Score parsing ────────────────────────────────────────────────────
@@ -156,7 +157,7 @@ function RecommendationBadge({ recommendation }: { recommendation: string }) {
 function CTASection() {
   return (
     <div className="mt-10 bg-stone-50 border border-stone-200 rounded-lg p-8 text-center">
-      <h2 className="font-brand text-xl mb-2">
+      <h2 className="font-brand text-2xl font-normal tracking-[-0.3px] mb-2">
         Get this level of coverage for your screenplay
       </h2>
       <p className="text-gray-600 text-sm mb-6 max-w-lg mx-auto">
@@ -165,18 +166,12 @@ function CTASection() {
         agencies and literary managers.
       </p>
       <div className="flex gap-3 justify-center flex-wrap">
-        <Link
-          href="/pricing"
-          className="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
-        >
-          See Pricing
-        </Link>
-        <Link
-          href="/coverage"
-          className="px-5 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
-        >
-          Try It Now
-        </Link>
+        <Button asChild size="lg">
+          <Link href="/pricing">See Pricing</Link>
+        </Button>
+        <Button asChild variant="outline" size="lg">
+          <Link href="/coverage">Try It Now</Link>
+        </Button>
       </div>
     </div>
   );
@@ -271,7 +266,7 @@ export default function SampleDetailClient({
       {/* Back link */}
       <Link
         href="/samples"
-        className="text-sm text-gray-500 hover:text-gray-700 transition-colors mb-6 inline-block"
+        className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 inline-block"
       >
         &larr; Back to Samples
       </Link>
@@ -291,7 +286,7 @@ export default function SampleDetailClient({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-brand mb-1">
+          <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-1">
             {(title || "Untitled").toUpperCase()}
             {releaseYear && (
               <span className="text-gray-400 font-normal ml-2">
@@ -299,7 +294,7 @@ export default function SampleDetailClient({
               </span>
             )}
           </h1>
-          <div className="text-sm text-gray-500 space-y-0.5 mt-1">
+          <div className="text-sm text-muted-foreground space-y-0.5 mt-1">
             <p>
               <span className="font-semibold text-gray-600">Written by:</span>{" "}
               {writer || "Unknown"}
@@ -319,13 +314,14 @@ export default function SampleDetailClient({
           </div>
           <div className="mt-3 flex items-center gap-3">
             <RecommendationBadge recommendation={recommendation} />
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={handleDownloadPDF}
               disabled={pdfBusy}
-              className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors disabled:opacity-50"
             >
               {pdfBusy ? "Generating..." : "Download PDF"}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

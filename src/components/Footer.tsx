@@ -8,7 +8,7 @@ const FOOTER_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-black/[0.08]">
+    <footer className="border-t border-border">
       <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
         <span className="text-xs text-gray-400">
           &copy; {new Date().getFullYear()} First Pass Coverage

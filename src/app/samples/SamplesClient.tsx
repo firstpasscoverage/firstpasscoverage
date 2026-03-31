@@ -90,7 +90,7 @@ function GenreRow({ genre, samples }: { genre: string; samples: Sample[] }) {
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-brand text-xl font-bold text-[#111]">{genre}</h2>
+        <h2 className="font-brand text-xl font-normal">{genre}</h2>
         <div className="flex items-center gap-1">
           <button
             onClick={() => scroll('left')}

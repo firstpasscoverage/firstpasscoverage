@@ -6,6 +6,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage";
 
 // ── Score parsing ────────────────────────────────────────────────────
@@ -210,7 +211,7 @@ export default function CoverageDetailClient({
       {/* Back link */}
       <Link
         href="/library"
-        className="text-sm text-gray-500 hover:text-gray-700 transition-colors mb-6 inline-block"
+        className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 inline-block"
       >
         &larr; Back to Library
       </Link>
@@ -218,10 +219,10 @@ export default function CoverageDetailClient({
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-brand mb-1">
+          <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-1">
             {(title || "Untitled").toUpperCase()}
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             {writer || "Unknown writer"}
             {draftDate && draftDate !== "Not specified"
               ? ` \u2022 ${reformatDate(draftDate)}`
@@ -235,19 +236,17 @@ export default function CoverageDetailClient({
         </div>
 
         <div className="flex gap-2 shrink-0">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={handleDownloadPDF}
             disabled={pdfBusy}
-            className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors disabled:opacity-50"
           >
             {pdfBusy ? "Generating..." : "Download PDF"}
-          </button>
-          <button
-            onClick={handleCopy}
-            className="px-3 py-1.5 text-xs rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-          >
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleCopy}>
             {copied ? "Copied!" : "Copy to clipboard"}
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 // Map each button to its Stripe price ID
 const PRICES = {
@@ -71,7 +72,7 @@ export default function PricingPage() {
   return (
     <div className="max-w-[900px] mx-auto px-6 py-12">
       <div className="text-center mb-10">
-        <h1 className="font-brand text-2xl font-normal mb-2">Pricing</h1>
+        <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-2">Pricing</h1>
         <p className="text-gray-500 text-sm">
           Professional screenplay coverage for $20. Subscribe for more coverages
           at a lower per-read cost.
@@ -88,21 +89,13 @@ export default function PricingPage() {
           three-minute turnaround.
         </p>
         <div className="flex gap-3 justify-center">
-          <button
-            onClick={() => checkout('single')}
-            disabled={loading !== null}
-            className="inline-block px-5 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors disabled:opacity-50"
-          >
+        <Button size="lg" onClick={() => checkout('single')} disabled={loading !== null}>
             {loading === 'single' ? 'Redirecting...' : '1 Coverage — $20'}
-          </button>
+          </Button>
           {!isSubscriber && (
-            <button
-              onClick={() => checkout('threePack')}
-              disabled={loading !== null}
-              className="inline-block px-5 py-2 bg-white text-[#111] border border-black/[0.12] text-[13px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
-              {loading === 'threePack' ? 'Redirecting...' : '3-Pack — $30'}
-            </button>
+            <Button variant="outline" size="lg" onClick={() => checkout('threePack')} disabled={loading !== null}>
+            {loading === 'threePack' ? 'Redirecting...' : '3-Pack — $30'}
+          </Button>
           )}
         </div>
       </div>
@@ -163,15 +156,11 @@ export default function PricingPage() {
             )}
           </div>
 
-          <button
-            onClick={() => checkout(annual ? 'writerAnnual' : 'writerMonthly')}
-            disabled={loading !== null}
-            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
-          >
+          <Button size="lg" className="w-full mb-6" onClick={() => checkout(annual ? 'writerAnnual' : 'writerMonthly')} disabled={loading !== null}>
             {loading === 'writerMonthly' || loading === 'writerAnnual'
               ? 'Redirecting...'
               : userTier === 'writer' ? 'Current Plan' : 'Subscribe'}
-          </button>
+          </Button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
             <li className="flex gap-2">
@@ -200,13 +189,9 @@ export default function PricingPage() {
             </div>
             {userTier === 'writer' ? (
               <>
-                <button
-                  onClick={() => checkout('writerAddon')}
-                  disabled={loading !== null}
-                  className="inline-block px-4 py-1.5 bg-white text-[#111] border border-black/[0.12] text-[11px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
+                <Button variant="outline" size="sm" onClick={() => checkout('writerAddon')} disabled={loading !== null}>
                   {loading === 'writerAddon' ? 'Redirecting...' : '6-Pack — $30'}
-                </button>
+                </Button>
                 <p className="text-[11px] text-gray-400 mt-1.5">
                   $5/coverage &middot; purchased credits don&apos;t expire
                 </p>
@@ -249,15 +234,11 @@ export default function PricingPage() {
             )}
           </div>
 
-          <button
-            onClick={() => checkout(annual ? 'producerAnnual' : 'producerMonthly')}
-            disabled={loading !== null}
-            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
-          >
+          <Button size="lg" className="w-full mb-6" onClick={() => checkout(annual ? 'producerAnnual' : 'producerMonthly')} disabled={loading !== null}>
             {loading === 'producerMonthly' || loading === 'producerAnnual'
               ? 'Redirecting...'
               : userTier === 'producer' ? 'Current Plan' : 'Subscribe'}
-          </button>
+          </Button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
             <li className="flex gap-2">
@@ -282,13 +263,9 @@ export default function PricingPage() {
             </div>
             {userTier === 'producer' ? (
               <>
-                <button
-                  onClick={() => checkout('producerAddon')}
-                  disabled={loading !== null}
-                  className="inline-block px-4 py-1.5 bg-white text-[#111] border border-black/[0.12] text-[11px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
+                <Button variant="outline" size="sm" onClick={() => checkout('producerAddon')} disabled={loading !== null}>
                   {loading === 'producerAddon' ? 'Redirecting...' : '8-Pack — $30'}
-                </button>
+                </Button>
                 <p className="text-[11px] text-gray-400 mt-1.5">
                   $3.75/coverage &middot; purchased credits don&apos;t expire
                 </p>
@@ -328,15 +305,11 @@ export default function PricingPage() {
             )}
           </div>
 
-          <button
-            onClick={() => checkout(annual ? 'executiveAnnual' : 'executiveMonthly')}
-            disabled={loading !== null}
-            className="block w-full text-center px-4 py-2 bg-[#111] text-[#fafafa] text-[13px] font-medium rounded-md hover:bg-[#333] transition-colors mb-6 disabled:opacity-50"
-          >
+          <Button size="lg" className="w-full mb-6" onClick={() => checkout(annual ? 'executiveAnnual' : 'executiveMonthly')} disabled={loading !== null}>
             {loading === 'executiveMonthly' || loading === 'executiveAnnual'
               ? 'Redirecting...'
               : userTier === 'executive' ? 'Current Plan' : 'Subscribe'}
-          </button>
+          </Button>
 
           <ul className="space-y-2.5 text-[12.5px] text-gray-600">
             <li className="flex gap-2">
@@ -361,13 +334,9 @@ export default function PricingPage() {
             </div>
             {userTier === 'executive' ? (
               <>
-                <button
-                  onClick={() => checkout('executiveAddon')}
-                  disabled={loading !== null}
-                  className="inline-block px-4 py-1.5 bg-white text-[#111] border border-black/[0.12] text-[11px] font-medium rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
+                <Button variant="outline" size="sm" onClick={() => checkout('executiveAddon')} disabled={loading !== null}>
                   {loading === 'executiveAddon' ? 'Redirecting...' : '10-Pack — $30'}
-                </button>
+                </Button>
                 <p className="text-[11px] text-gray-400 mt-1.5">
                   $3/coverage &middot; purchased credits don&apos;t expire
                 </p>
