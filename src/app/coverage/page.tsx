@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import RatingsGrid, { parseScores, splitCoverageAtMetadata } from "@/components/RatingsGrid";
 import FormattedCoverage from "@/components/FormattedCoverage";
+import WarmCallout from "@/components/WarmCallout";
 
 type Status = "idle" | "uploading" | "extracting" | "analyzing" | "scoring" | "done" | "error";
 
@@ -302,7 +303,7 @@ export default function CoveragePage() {
               <span> available</span>
             </span>
           ) : (
-            <div className="bg-[#fffbf5] border border-[#f0e6d6] rounded-lg px-6 py-5 text-center">
+            <WarmCallout className="px-6 py-5 text-center">
               <p className="text-[15px] font-medium text-foreground mb-1">
                 No coverage credits available
               </p>
@@ -312,7 +313,7 @@ export default function CoveragePage() {
               <Button asChild size="lg">
                 <Link href="/pricing">View Pricing</Link>
               </Button>
-            </div>
+            </WarmCallout>
           )}
         </div>
       )}

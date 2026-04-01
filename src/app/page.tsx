@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import WarmCallout from "@/components/WarmCallout";
 
 export default function Home() {
   return (
@@ -18,11 +19,11 @@ export default function Home() {
             professionals who&apos;ve evaluated thousands of scripts.
           </p>
 
-          <div className="py-4 px-6 bg-[#fffbf5] border border-[#f0e6d6] rounded-lg mb-6">
+          <WarmCallout className="py-4 px-6 mb-6">
             <p className="text-[13px] text-[#78644e] italic text-center">
               Coverage of your first pass, or a first pass of coverage.
             </p>
-          </div>
+          </WarmCallout>
 
           <Button asChild size="lg">
             <Link href="/coverage">Get Coverage</Link>

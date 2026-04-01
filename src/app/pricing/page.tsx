@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import WarmCallout from "@/components/WarmCallout";
 
 // Map each button to its Stripe price ID
 const PRICES = {
@@ -80,7 +81,7 @@ export default function PricingPage() {
       </div>
 
       {/* One-off callout */}
-      <div className="bg-[#fffbf5] border border-[#f0e6d6] rounded-lg px-6 py-5 mb-10 max-w-[480px] mx-auto text-center">
+      <WarmCallout className="px-6 py-5 mb-10 max-w-[480px] mx-auto text-center">
         <div className="text-[15px] font-medium text-foreground mb-1">
           Just need one coverage?
         </div>
@@ -98,7 +99,7 @@ export default function PricingPage() {
           </Button>
           )}
         </div>
-      </div>
+      </WarmCallout>
 
       {/* Billing toggle */}
       <div className="flex items-center justify-center gap-4 mb-10">
