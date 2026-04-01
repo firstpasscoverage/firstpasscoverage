@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import WarmCallout from "@/components/WarmCallout";
 
 // Map each button to its Stripe price ID
@@ -108,19 +109,7 @@ export default function PricingPage() {
         >
           Monthly
         </span>
-        <button
-          onClick={() => setAnnual(!annual)}
-          className={`relative w-11 h-[22px] rounded-full transition-colors shrink-0 ${
-            annual ? "bg-primary" : "bg-gray-300"
-          }`}
-          aria-label="Toggle annual billing"
-        >
-          <span
-            className={`absolute top-[2px] w-[18px] h-[18px] bg-white rounded-full shadow transition-transform ${
-              annual ? "translate-x-[22px]" : "translate-x-[2px]"
-            }`}
-          />
-        </button>
+        <Switch checked={annual} onCheckedChange={setAnnual} />
         <span
           className={`text-[13px] font-medium whitespace-nowrap ${annual ? "text-foreground" : "text-gray-400"}`}
         >
@@ -184,7 +173,7 @@ export default function PricingPage() {
             </li>
           </ul>
 
-          <div className="mt-5 pt-4 border-t border-black/[0.06]">
+          <div className="mt-5 pt-4 border-t border-border">
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
               NEED MORE?
             </div>
@@ -258,7 +247,7 @@ export default function PricingPage() {
             </li>
           </ul>
 
-          <div className="mt-5 pt-4 border-t border-black/[0.06]">
+          <div className="mt-5 pt-4 border-t border-border">
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
               NEED MORE?
             </div>
@@ -329,7 +318,7 @@ export default function PricingPage() {
             </li>
           </ul>
 
-          <div className="mt-5 pt-4 border-t border-black/[0.06]">
+          <div className="mt-5 pt-4 border-t border-border">
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
               NEED MORE?
             </div>
@@ -417,7 +406,7 @@ export default function PricingPage() {
                 </tr>
               </thead>
               <tbody className="text-gray-600">
-                <tr className="border-b border-black/[0.04]">
+                <tr className="border-b border-border/40">
                   <td className="py-2.5 pr-4 font-medium text-gray-500">
                     Price per read
                   </td>
@@ -426,14 +415,14 @@ export default function PricingPage() {
                   </td>
                   <td className="py-2.5 pl-4">$75&ndash;$300</td>
                 </tr>
-                <tr className="border-b border-black/[0.04]">
+                <tr className="border-b border-border/40">
                   <td className="py-2.5 pr-4 font-medium text-gray-500">
                     Turnaround
                   </td>
                   <td className="py-2.5 px-4 text-foreground">~3 minutes</td>
                   <td className="py-2.5 pl-4">3&ndash;14 days</td>
                 </tr>
-                <tr className="border-b border-black/[0.04]">
+                <tr className="border-b border-border/40">
                   <td className="py-2.5 pr-4 font-medium text-gray-500">
                     Rated categories
                   </td>
@@ -442,7 +431,7 @@ export default function PricingPage() {
                   </td>
                   <td className="py-2.5 pl-4">Varies (often unstructured)</td>
                 </tr>
-                <tr className="border-b border-black/[0.04]">
+                <tr className="border-b border-border/40">
                   <td className="py-2.5 pr-4 font-medium text-gray-500">
                     Consistency
                   </td>
