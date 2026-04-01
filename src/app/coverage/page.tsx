@@ -303,7 +303,7 @@ export default function CoveragePage() {
             </span>
           ) : (
             <div className="bg-[#fffbf5] border border-[#f0e6d6] rounded-lg px-6 py-5 text-center">
-              <p className="text-[15px] font-medium text-[#111] mb-1">
+              <p className="text-[15px] font-medium text-foreground mb-1">
                 No coverage credits available
               </p>
               <p className="text-[12.5px] text-gray-500 mb-3">

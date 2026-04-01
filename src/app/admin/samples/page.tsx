@@ -17,7 +17,7 @@ export default async function AdminSamplesPage() {
   const email = user?.emailAddresses?.[0]?.emailAddress ?? ''
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="mb-8">
           <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-2">

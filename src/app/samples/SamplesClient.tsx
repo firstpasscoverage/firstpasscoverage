@@ -57,13 +57,13 @@ function SampleCard({ sample }: { sample: Sample }) {
         )}
         {/* Rating badge */}
         {sample.recommendation && (
-          <div className="absolute bottom-2 right-2 bg-[#111]/85 text-white text-xs font-semibold px-2.5 py-1 rounded">
+          <div className="absolute bottom-2 right-2 bg-primary/85 text-white text-xs font-semibold px-2.5 py-1 rounded">
             {sample.recommendation}
           </div>
         )}
       </div>
       {/* Title and writer */}
-      <h3 className="text-sm font-medium text-[#111] truncate group-hover:underline">
+      <h3 className="text-sm font-medium text-foreground truncate group-hover:underline">
         {(sample.title ?? 'Untitled').toUpperCase()}
       </h3>
       <p className="text-xs text-gray-500 truncate">
@@ -94,7 +94,7 @@ function GenreRow({ genre, samples }: { genre: string; samples: Sample[] }) {
         <div className="flex items-center gap-1">
           <button
             onClick={() => scroll('left')}
-            className="p-1.5 rounded hover:bg-gray-200 transition-colors text-gray-500 hover:text-[#111]"
+            className="p-1.5 rounded hover:bg-gray-200 transition-colors text-gray-500 hover:text-foreground"
             aria-label="Scroll left"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,7 +103,7 @@ function GenreRow({ genre, samples }: { genre: string; samples: Sample[] }) {
           </button>
           <button
             onClick={() => scroll('right')}
-            className="p-1.5 rounded hover:bg-gray-200 transition-colors text-gray-500 hover:text-[#111]"
+            className="p-1.5 rounded hover:bg-gray-200 transition-colors text-gray-500 hover:text-foreground"
             aria-label="Scroll right"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -198,15 +198,15 @@ export default function SamplesClient({ samples }: { samples: Sample[] }) {
   return (
     <div>
       {/* View toggles */}
-      <div className="flex items-center gap-1 mb-8 border-b border-black/[0.08] pb-3">
+      <div className="flex items-center gap-1 mb-8 border-b border-border pb-3">
         {views.map((v) => (
           <button
             key={v.key}
             onClick={() => setViewMode(v.key)}
             className={`px-4 py-2 text-sm rounded-t transition-colors ${
               viewMode === v.key
-                ? 'font-medium text-[#111] bg-white border border-black/[0.08] border-b-white -mb-[1px]'
-                : 'text-gray-500 hover:text-[#111]'
+                ? 'font-medium text-foreground bg-white border border-border border-b-white -mb-[1px]'
+                : 'text-gray-500 hover:text-foreground'
             }`}
           >
             {v.label}

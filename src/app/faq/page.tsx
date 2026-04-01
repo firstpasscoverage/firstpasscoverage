@@ -77,7 +77,7 @@ export default function FAQPage() {
       <div className="space-y-8">
         {FAQS.map((faq, i) => (
           <div key={i}>
-            <h3 className="text-[15px] font-medium text-[#111] mb-2">
+            <h3 className="text-[15px] font-medium text-foreground mb-2">
               {faq.q}
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
@@ -86,7 +86,7 @@ export default function FAQPage() {
 
         {/* Pricing FAQ with Link — handled outside the array */}
         <div>
-          <h3 className="text-[15px] font-medium text-[#111] mb-2">
+          <h3 className="text-[15px] font-medium text-foreground mb-2">
             {PRICING_FAQ.q}
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed">
@@ -96,7 +96,7 @@ export default function FAQPage() {
             pricing. See our{" "}
             <Link
               href="/pricing"
-              className="text-[#111] underline underline-offset-2 hover:opacity-70 transition-opacity"
+              className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity"
             >
               pricing page
             </Link>{" "}

@@ -15,7 +15,7 @@ export default async function SamplesPage() {
   const samples = await getAllSamples()
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-10">

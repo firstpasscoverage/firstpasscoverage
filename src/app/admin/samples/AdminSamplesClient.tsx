@@ -260,7 +260,7 @@ export default function AdminSamplesClient() {
 
       <div className="space-y-3">
         {coverages.map((coverage) => (
-          <div key={coverage.id} className="border border-black/[0.08] rounded-lg bg-white">
+          <div key={coverage.id} className="border border-border rounded-lg bg-white">
             {/* Coverage row */}
             <div className="flex items-center gap-4 px-5 py-4">
               {/* Poster thumbnail (if sample with poster) */}
@@ -275,7 +275,7 @@ export default function AdminSamplesClient() {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-[#111] truncate">
+                  <span className="font-medium text-foreground truncate">
                     {coverage.title || 'Untitled'}
                   </span>
                   {coverage.isSample && (
@@ -304,7 +304,7 @@ export default function AdminSamplesClient() {
                       onClick={() =>
                         expandedId === coverage.id ? closeForm() : openForm(coverage)
                       }
-                      className="text-sm text-[#111] underline underline-offset-2 hover:text-gray-600"
+                      className="text-sm text-foreground underline underline-offset-2 hover:text-gray-600"
                     >
                       {expandedId === coverage.id ? 'Cancel' : 'Edit'}
                     </button>
@@ -331,11 +331,11 @@ export default function AdminSamplesClient() {
 
             {/* Expanded form */}
             {expandedId === coverage.id && (
-              <div className="border-t border-black/[0.08] px-5 py-5 bg-[#fafafa]/50">
+              <div className="border-t border-border px-5 py-5 bg-background/50">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Left column: TMDB search + poster preview */}
                   <div>
-                    <label className="block text-sm font-medium text-[#111] mb-1.5">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
                       Find poster on TMDB
                     </label>
                     <div className="flex gap-2 mb-3">
@@ -345,7 +345,7 @@ export default function AdminSamplesClient() {
                         onChange={(e) => setTmdbQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleTmdbSearch()}
                         placeholder="Search movie title…"
-                        className="flex-1 border border-black/[0.08] rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#111]"
+                        className="flex-1 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                       />
                       <Button size="sm" onClick={handleTmdbSearch} disabled={tmdbSearching}>
                         {tmdbSearching ? 'Searching…' : 'Search'}
@@ -354,7 +354,7 @@ export default function AdminSamplesClient() {
 
                     {/* TMDB results */}
                     {tmdbResults.length > 0 && (
-                      <div className="border border-black/[0.08] rounded bg-white max-h-64 overflow-y-auto mb-3">
+                      <div className="border border-border rounded bg-white max-h-64 overflow-y-auto mb-3">
                         {tmdbResults.map((r) => (
                           <button
                             key={r.tmdbId}
@@ -371,7 +371,7 @@ export default function AdminSamplesClient() {
                               <div className="w-8 h-12 bg-gray-200 rounded flex-shrink-0" />
                             )}
                             <div className="min-w-0">
-                              <div className="text-sm font-medium text-[#111] truncate">
+                              <div className="text-sm font-medium text-foreground truncate">
                                 {r.title}
                               </div>
                               <div className="text-xs text-gray-500">
@@ -405,7 +405,7 @@ export default function AdminSamplesClient() {
                   {/* Right column: metadata fields */}
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#111] mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         URL Slug
                       </label>
                       <input
@@ -413,7 +413,7 @@ export default function AdminSamplesClient() {
                         value={formSlug}
                         onChange={(e) => setFormSlug(slugify(e.target.value))}
                         placeholder="e.g. sinners"
-                        className="w-full border border-black/[0.08] rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#111]"
+                        className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                       />
                       <p className="text-xs text-gray-400 mt-1">
                         /samples/{formSlug || '…'}
@@ -421,13 +421,13 @@ export default function AdminSamplesClient() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#111] mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Display Genre
                       </label>
                       <select
                         value={formGenre}
                         onChange={(e) => setFormGenre(e.target.value)}
-                        className="w-full border border-black/[0.08] rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#111] bg-white"
+                        className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring bg-white"
                       >
                         <option value="">Select genre…</option>
                         {GENRE_OPTIONS.map((g) => (
@@ -440,7 +440,7 @@ export default function AdminSamplesClient() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[#111] mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                           Release Year
                         </label>
                         <input
@@ -448,11 +448,11 @@ export default function AdminSamplesClient() {
                           value={formReleaseYear}
                           onChange={(e) => setFormReleaseYear(e.target.value)}
                           placeholder="2025"
-                          className="w-full border border-black/[0.08] rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#111]"
+                          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-[#111] mb-1">
+                        <label className="block text-sm font-medium text-foreground mb-1">
                           Display Order
                         </label>
                         <input
@@ -460,7 +460,7 @@ export default function AdminSamplesClient() {
                           value={formDisplayOrder}
                           onChange={(e) => setFormDisplayOrder(e.target.value)}
                           placeholder="0"
-                          className="w-full border border-black/[0.08] rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#111]"
+                          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                       </div>
                     </div>

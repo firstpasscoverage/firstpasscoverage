@@ -53,7 +53,7 @@ export default function AboutPage() {
           Questions, feedback, or partnership inquiries:{" "}
           <a
             href="mailto:contact@firstpasscoverage.com"
-            className="text-[#111] underline underline-offset-2 hover:opacity-70 transition-opacity"
+            className="text-foreground underline underline-offset-2 hover:opacity-70 transition-opacity"
           >
             contact@firstpasscoverage.com
           </a>
