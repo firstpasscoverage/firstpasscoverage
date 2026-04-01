@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // ---------- Types ----------
 
@@ -339,13 +340,13 @@ export default function AdminSamplesClient() {
                       Find poster on TMDB
                     </label>
                     <div className="flex gap-2 mb-3">
-                      <input
+                    <Input
                         type="text"
                         value={tmdbQuery}
                         onChange={(e) => setTmdbQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleTmdbSearch()}
                         placeholder="Search movie title…"
-                        className="flex-1 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                        className="flex-1"
                       />
                       <Button size="sm" onClick={handleTmdbSearch} disabled={tmdbSearching}>
                         {tmdbSearching ? 'Searching…' : 'Search'}
@@ -359,7 +360,7 @@ export default function AdminSamplesClient() {
                           <button
                             key={r.tmdbId}
                             onClick={() => selectTmdbResult(r)}
-                            className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 border-b border-black/[0.05] last:border-b-0 text-left"
+                            className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 border-b border-border/50 last:border-b-0 text-left"
                           >
                             {r.posterUrl ? (
                               <img
@@ -408,12 +409,11 @@ export default function AdminSamplesClient() {
                       <label className="block text-sm font-medium text-foreground mb-1">
                         URL Slug
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={formSlug}
                         onChange={(e) => setFormSlug(slugify(e.target.value))}
                         placeholder="e.g. sinners"
-                        className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                       />
                       <p className="text-xs text-gray-400 mt-1">
                         /samples/{formSlug || '…'}
@@ -443,24 +443,22 @@ export default function AdminSamplesClient() {
                         <label className="block text-sm font-medium text-foreground mb-1">
                           Release Year
                         </label>
-                        <input
+                        <Input
                           type="number"
                           value={formReleaseYear}
                           onChange={(e) => setFormReleaseYear(e.target.value)}
                           placeholder="2025"
-                          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-1">
                           Display Order
                         </label>
-                        <input
+                        <Input
                           type="number"
                           value={formDisplayOrder}
                           onChange={(e) => setFormDisplayOrder(e.target.value)}
                           placeholder="0"
-                          className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                         />
                       </div>
                     </div>
