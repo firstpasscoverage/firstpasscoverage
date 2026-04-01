@@ -64,7 +64,7 @@ export default function RatingsGrid({ categories, overall }: ParsedScores) {
   if (categories.length === 0) return null;
 
   return (
-    <div className="my-6 py-4 border-t border-b border-gray-200">
+    <div className="my-6 py-4 border-t border-b border-border">
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr>

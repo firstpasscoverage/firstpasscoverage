@@ -96,7 +96,7 @@ export default function FormattedCoverage({ text }: Props) {
           em: ({ children }) => (
             <em className="italic text-gray-600">{children}</em>
           ),
-          hr: () => <hr className="my-6 border-gray-200" />,
+          hr: () => <hr className="my-6 border-border" />,
           ul: ({ children }) => (
             <ul className="list-disc list-inside text-sm text-gray-800 mb-3 space-y-1">
               {children}

@@ -17,7 +17,7 @@ import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage"
 
 function CTASection() {
   return (
-    <div className="mt-10 bg-stone-50 border border-stone-200 rounded-lg p-8 text-center">
+    <div className="mt-10 bg-stone-50 border border-border rounded-lg p-8 text-center">
       <h2 className="font-brand text-2xl font-normal tracking-[-0.3px] mb-2">
         Get this level of coverage for your screenplay
       </h2>
@@ -178,7 +178,7 @@ export default function SampleDetailClient({
       </div>
 
       {/* Coverage content */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-border rounded-lg p-6">
         {coverageSplit && scores.categories.length > 0 ? (
           <>
             <FormattedCoverage text={coverageSplit.beforeMetadata} />

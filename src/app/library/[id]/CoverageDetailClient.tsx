@@ -132,7 +132,7 @@ export default function CoverageDetailClient({
       </div>
 
       {/* Coverage content */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-border rounded-lg p-6">
         {coverageSplit && scores.categories.length > 0 ? (
           <>
             <FormattedCoverage text={coverageSplit.beforeMetadata} />

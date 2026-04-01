@@ -45,7 +45,7 @@ export default function AboutPage() {
         </p>
       </div>
 
-      <div className="mt-12 pt-8 border-t border-gray-200">
+      <div className="mt-12 pt-8 border-t border-border">
         <h2 className="font-brand text-2x1 font-normal tracking-[-0.3px] mb-3">
           Get in touch
         </h2>

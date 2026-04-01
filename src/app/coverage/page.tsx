@@ -418,7 +418,7 @@ export default function CoveragePage() {
 
           <div
             ref={coverageRef}
-            className="bg-white border border-gray-200 rounded-lg p-6 max-h-[70vh] overflow-y-auto"
+            className="bg-white border border-border rounded-lg p-6 max-h-[70vh] overflow-y-auto"
           >
             {status === "done" && coverageSplit && scores.categories.length > 0 ? (
               <>

@@ -18,7 +18,7 @@ interface Props {
 export default function RecommendationBadge({ recommendation, className = "" }: Props) {
   const colors =
     RECOMMENDATION_COLORS[recommendation] ??
-    "bg-gray-50 text-gray-700 border-gray-200";
+    "bg-gray-50 text-gray-700 border-border";
   return (
     <span
       className={`inline-block px-3 py-1 text-xs font-medium rounded-full border ${colors} ${className}`}
