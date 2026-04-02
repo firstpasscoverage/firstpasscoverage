@@ -14,22 +14,18 @@ export default function Home() {
             in three minutes, for $20.
           </h1>
           <p className="text-[15px] text-muted-foreground leading-relaxed mb-8">
-            Upload your screenplay. Get detailed, calibrated coverage across ten
-            rated categories with page-specific citations. Designed by industry
-            professionals who&apos;ve evaluated thousands of scripts.
+            You're not alone: Everyone needs a first pass take on their latest draft. 
+            <br />
+            First
+            Pass Coverage is exactly what you've been looking for: Quick coverage based on
+            the rules every industry pro has relied on since JAWS.
           </p>
-
-          <WarmCallout className="py-4 px-6 mb-6">
-            <p className="text-[13px] text-[#78644e] italic text-center">
-              Coverage of your first pass, or a first pass of coverage.
-            </p>
-          </WarmCallout>
 
           <Button asChild size="lg">
             <Link href="/coverage">Get Coverage</Link>
           </Button>
           <p className="text-xs text-gray-400 mt-3.5">
-            PDF format · 4MB max · Coverage in about 3 minutes
+            PDF format · 4MB max · Coverage in less than 3 minutes
           </p>
         </div>
       </section>
@@ -40,25 +36,25 @@ export default function Home() {
       {/* The Problem */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-6">
-            Coverage shouldn&apos;t be a luxury.
+          <h2 className="font-brand text-[32px] font-normal text-foreground leading-[1.3] tracking-[-0.5px] mb-4">
+            Creative feedback shouldn&apos;t be a luxury.
           </h2>
           <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
             <p>
               Professional screenplay coverage runs $75 to $300 per read and
-              takes one to two weeks. At those prices, most writers can afford
-              feedback once or twice &mdash; not on every draft where it would
-              actually help. The result: scripts go to competitions, agents, and
-              producers without the writer knowing whether the material is ready.
-              That&apos;s expensive, and not just in dollars.
+              takes one to two weeks. Reasonable pricing and timing (a guy's gotta eat),
+              but at those prices, most writers can only afford feedback here and there &mdash; 
+              not on every draft where it would actually help. The result: Scripts 
+              get submitted to competitions, agents, and producers without the writer 
+              knowing whether the material is ready. That&apos;s expensive, and not just in dollars.
             </p>
             <p>
-              First Pass Coverage changes the math. At $20 per coverage and
-              three minutes per read, you can use it the way coverage was always
-              meant to work &mdash; as a development tool, not a one-time
-              verdict. Run your script after a structural overhaul. Run it again
+              First Pass Coverage changes the math. At $20 per coverage (far less for subscribers)
+              and three minutes per read, you can use it the way coverage was always
+              meant to work &mdash; as a development tool, not a one-time, end-all,
+              be-all assessment. Run a draft after a structural overhaul. Run one again
               after a dialogue pass. Know what improved and what didn&apos;t,
-              with specific evidence, before you spend real money on submissions.
+              with specific evidence, before you spend real money on competitions and festivals.
             </p>
           </div>
         </div>
@@ -88,9 +84,8 @@ export default function Home() {
                 Synopsis
               </div>
               <div className="text-[12.5px] text-muted-foreground leading-relaxed">
-                A comprehensive, chronological summary that tracks every major
-                beat from setup through resolution. Characters introduced in ALL
-                CAPS with age and description.
+                A beat by beat summary from setup through resolution. Characters 
+                introduced in ALL CAPS with age and description.
               </div>
             </div>
             <div>
@@ -99,8 +94,8 @@ export default function Home() {
               </div>
               <div className="text-[12.5px] text-muted-foreground leading-relaxed">
                 Premise, structure, character, conflict, dialogue, pacing, tone,
-                originality, logic, and craft &mdash; each rated 1&ndash;5 with
-                a paragraph of analysis citing specific pages and scenes.
+                originality, logic, and craft &mdash; each rated from Weak to Excellent,
+                with a paragraph of analysis citing specific pages and scenes.
               </div>
             </div>
             <div>
@@ -117,9 +112,8 @@ export default function Home() {
                 Production metadata
               </div>
               <div className="text-[12.5px] text-muted-foreground leading-relaxed">
-                Genre, budget tier, MPA rating, comps, locations, lead
-                description, and more. Everything a producer needs to decide
-                whether to read further.
+                Genre, budget tier, MPA rating, comps, locations, lead description,
+                and more. All the basic context producers need, at a glance.
               </div>
             </div>
             <div>
@@ -127,7 +121,7 @@ export default function Home() {
                 Downloadable PDF
               </div>
               <div className="text-[12.5px] text-muted-foreground leading-relaxed">
-                Professional coverage document suitable for development files,
+                Professional coverage document, suitable for development files,
                 submission packages, or sharing with collaborators.
               </div>
             </div>
@@ -150,15 +144,14 @@ export default function Home() {
                 Built on industry methodology
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
-                The evaluation framework was designed by entertainment
-                professionals with backgrounds at major talent agencies and in
-                literary management &mdash; people who&apos;ve read thousands of
-                scripts and built evaluation systems used across the industry.
-                The ten categories, the rating rubric, and the diagnostic
-                approach reflect how experienced readers actually assess
-                material. This isn&apos;t a generic AI prompt asking &ldquo;is
-                this screenplay good?&rdquo; It&apos;s a structured analytical
-                framework calibrated against professional baselines.
+                FPC's evaluation framework was designed by entertainment
+                professionals with backgrounds at studios, agencies, production 
+                companies, and management companies &mdash; people who&apos;ve 
+                read tens of thousands of scripts and written coverage throughout the
+                industry. The ten categories, the rating rubric, and the diagnostic
+                approach reflect how experienced readers actually assess material.
+                We're using a structured analytical framework calibrated against 
+                professional baselines, not a generic AI prompt.
               </p>
             </div>
             <div>
@@ -170,7 +163,7 @@ export default function Home() {
                 built a two-pass system specifically to prevent that. The first
                 pass writes the analytical commentary without assigning any
                 ratings. The second pass reads that commentary cold and derives
-                ratings from what the analysis actually says. The result: when
+                ratings from what the analysis actually says. The result: When
                 the coverage identifies a weakness, the rating reflects it. When
                 it identifies a strength, the rating reflects that too. No
                 inflation, no accommodation.
@@ -181,13 +174,13 @@ export default function Home() {
                 Coverage you can afford to use more than once
               </div>
               <p className="text-sm text-gray-600 leading-relaxed">
-                At $20 per analysis and three minutes per read, you can use
-                First Pass Coverage throughout your development process &mdash;
-                not just at the end. Track how your script improves across
-                drafts. Identify which revisions moved the needle and which
-                didn&apos;t. One round of traditional human coverage costs
-                $75&ndash;$300. For that price, you can run your script through
-                FPC four to fifteen times.
+                At $20 per analysis (far less for Subscribers) and three minutes per 
+                read, you can use First Pass Coverage throughout your 
+                development process, not just at the end. Track how your script
+                improves across drafts. Identify which revisions moved the needle
+                and which didn&apos;t. One round of traditional human coverage costs
+                $75&ndash;$300. At that rate, you can easily run your script through
+                FPC over a dozen times.
               </p>
             </div>
             <div>
@@ -197,8 +190,8 @@ export default function Home() {
               <p className="text-sm text-gray-600 leading-relaxed">
                 Your screenplay is processed in real time and is not stored,
                 retained, or used to train any AI model. We use the Anthropic
-                API as a processing layer &mdash; your script goes in, coverage
-                comes out, nothing is kept. Period.
+                API as a processing layer &mdash; script tokens go in, coverage
+                comes out, nothing is stored. Period.
               </p>
             </div>
           </div>
@@ -216,15 +209,24 @@ export default function Home() {
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             First Pass Coverage was designed by development professionals with
-            experience at major talent agencies and in literary management
-            &mdash; people who&apos;ve spent careers reading, evaluating, and
+            experience at studios, agencies, management companies, and production 
+            companies &mdash; people who&apos;ve spent careers reading, evaluating, and
             developing screenplays across every genre and budget level. We built
-            this because we&apos;ve seen both sides of the coverage problem.
+            this tool because we&apos;ve seen both sides of the coverage problem.
             Writers spend too much for inconsistent feedback. Producers spend too
             much time reading material that isn&apos;t ready. First Pass
             Coverage gives everyone a fast, rigorous, affordable first read
             &mdash; so the time and money that follows is better spent.
           </p>
+        
+          <div className="mt-8 flex flex-col items-center gap-3">
+  <Button asChild size="lg" variant="outline">
+    <Link href="/samples">Browse Sample Coverages</Link>
+  </Button>
+  <p className="text-xs text-gray-400">
+    See exactly what you'll get — real scripts, real analysis.
+  </p>
+</div>
         </div>
       </section>
     </>

@@ -8,45 +8,44 @@ export default function AboutPage() {
       <div className="space-y-5 text-sm text-gray-600 leading-relaxed">
         <p>
           First Pass Coverage was built by entertainment industry professionals
-          who&apos;ve spent their careers inside the screenplay evaluation
-          process &mdash; at talent agencies, in literary management, and in
-          development. We&apos;ve read thousands of scripts. We&apos;ve built
-          evaluation systems. We&apos;ve seen what good coverage looks like and
-          how rarely writers actually get it.
+          who&apos;ve spent their careers evaluating screenplays at studios, agencies, 
+          management companies, and production companies. We&apos;ve read tens of thousands of 
+          scripts. We've written countless coverages. We know what good feedback looks
+          like and how rarely writers actually receive it (especially aspiring screenwriters).
         </p>
 
         <p>
-          The evaluation framework behind FPC isn&apos;t a generic AI prompt.
-          It&apos;s a structured analytical methodology with ten diagnostic
-          categories, each defined by specific questions a professional reader
-          would ask. The rating rubric was calibrated against professional script
-          assessments across multiple screenplays and rating ranges. And the
-          system uses a two-pass architecture &mdash; one pass for analysis, a
-          separate pass for rating &mdash; designed to prevent the inflation that
-          plagues most AI evaluation tools.
+          The evaluation framework we built into FPC isn&apos;t a generic AI prompt. 
+          It&apos;s a structured, best practices-based, analytical methodology,
+          defined by the specific questions professional readers are trained to ask.
+          Our ratings have been calibrated against professional script assessments across 
+          multiple screenplays and rating ranges. And the system uses a two-pass architecture &mdash; 
+          one pass for analysis, a separate pass for rating &mdash; designed to prevent the "pick me" 
+          inflation that plagues most AI evaluation tools.
         </p>
 
         <p>
-          We built First Pass Coverage because the current landscape doesn&apos;t
-          serve most writers. Professional human coverage costs $75 to $300 per
-          read and takes days to weeks. AI coverage tools either lack a rigorous
-          methodology or default to flattering feedback that doesn&apos;t help
-          anyone improve. And the most popular affordable coverage services shut
-          down in the past year, leaving a gap that hasn&apos;t been filled.
+          We're not saints, but we built First Pass Coverage because the current landscape 
+          doesn&apos;t serve most writers. Professional human coverage costs $75 to $300 per
+          read (deservedly so! they're bringing hours of time and hard-won experience to the table) 
+          and takes days to weeks to deliver. Generic AI coverage tools either lack a tested, 
+          rigorous methodology or default to flattering feedback that doesn&apos;t help
+          anyone improve. Not to mention the fact most popular affordable coverage services 
+          just evaporated, leaving a gap that hasn&apos;t been filled.
         </p>
 
         <p>
-          The name tells you our philosophy: this is a first pass. A rigorous,
-          calibrated starting point &mdash; not the final word on any screenplay.
-          Use it to understand how your material reads before you invest in
-          submissions, competitions, or further development. Use it to track your
-          progress across drafts. Use it to triage a reading pile. We built the
-          tool we wished existed when we were on the other side of the desk.
+          Our name spells out our philosophy: This is a first pass read of your script. 
+          A rigorous, structured, and calibrated starting point &mdash; not the final 
+          word on any given draft. Use us to understand how your material plays before 
+          you invest in representative submissions, competitions, or further development. 
+          Use it to track progress across drafts. Use it to triage your slush pile. We built the
+          tool we wished existed when we were on the other side of the desk. (In both directions.)
         </p>
       </div>
 
       <div className="mt-12 pt-8 border-t border-border">
-        <h2 className="font-brand text-2x1 font-normal tracking-[-0.3px] mb-3">
+        <h2 className="font-brand text-2xl font-normal tracking-[-0.3px] mb-3">
           Get in touch
         </h2>
         <p className="text-sm text-gray-600">

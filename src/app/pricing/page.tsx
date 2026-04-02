@@ -76,19 +76,19 @@ export default function PricingPage() {
       <div className="text-center mb-10">
         <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-2">Pricing</h1>
         <p className="text-gray-500 text-sm">
-          Professional screenplay coverage for $20. Subscribe for more coverages
-          at a lower per-read cost.
+          Full-on professional screenplay coverage for $20. Need more than one? Monthly subscriptions drop your per draft charge by a mile.
         </p>
       </div>
 
       {/* One-off callout */}
       <WarmCallout className="px-6 py-5 mb-10 max-w-[480px] mx-auto text-center">
         <div className="text-[15px] font-medium text-foreground mb-1">
-          Just need one coverage?
+          Just need a one-off?
         </div>
         <p className="text-[12.5px] text-gray-500 mb-3">
-          No subscription required. Same analysis, same quality, same
-          three-minute turnaround.
+          <p>No subscription required. Three-minute turnaround.</p>
+          <p>(Definitely download the PDF when it pops up.
+          Your Coverage Library is tied to your subscription. But you know... No pressure.)</p>
         </p>
         <div className="flex gap-3 justify-center">
         <Button size="lg" onClick={() => checkout('single')} disabled={loading !== null}>
@@ -117,7 +117,7 @@ export default function PricingPage() {
         </span>
         {annual && (
           <span className="text-[11px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-medium ml-1">
-            2 months free
+            Annual = 2 months free, you savage you
           </span>
         )}
       </div>
@@ -127,10 +127,10 @@ export default function PricingPage() {
         {/* Writer */}
         <div className="border border-border rounded-lg p-6">
           <div className="text-[13px] font-medium text-gray-400 mb-1">
-            WRITER
+            WRITER TIER
           </div>
           <div className="font-brand text-lg font-normal text-foreground mb-1">
-            For screenwriters developing material
+            Priced so you can hone drafts on the regular
           </div>
           <div className="mb-5 mt-4">
             <span className="text-[28px] font-medium text-foreground">
@@ -161,15 +161,15 @@ export default function PricingPage() {
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
-              <span>Full report with 10 rated categories</span>
+              <span>Full-blown, fresh eyes coverage every time</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
-              <span>Downloadable PDF for each coverage</span>
+              <span>Downloadable, shareable PDF for every draft</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
-              <span>Coverage library &mdash; access past coverages anytime</span>
+              <span>Always-on library &mdash; access past coverages on a whim</span>
             </li>
           </ul>
 
@@ -180,10 +180,10 @@ export default function PricingPage() {
             {userTier === 'writer' ? (
               <>
                 <Button variant="outline" size="sm" onClick={() => checkout('writerAddon')} disabled={loading !== null}>
-                  {loading === 'writerAddon' ? 'Redirecting...' : '6-Pack — $30'}
+                  {loading === 'writerAddon' ? 'Redirecting...' : '6-Pack — $30 ($5/coverage)'}
                 </Button>
                 <p className="text-[11px] text-gray-400 mt-1.5">
-                  $5/coverage &middot; purchased credits don&apos;t expire
+                  Purchased credits never expire.
                 </p>
               </>
             ) : (
@@ -192,7 +192,7 @@ export default function PricingPage() {
                   6-pack for $30 ($5/coverage)
                 </p>
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Purchased coverages don&apos;t expire.
+                  Purchased credits never expire.
                 </p>
               </>
             )}
@@ -205,10 +205,10 @@ export default function PricingPage() {
             MOST POPULAR
           </div>
           <div className="text-[13px] font-medium text-gray-400 mb-1">
-            PRODUCER
+            PRODUCER TIER
           </div>
           <div className="font-brand text-lg font-normal text-foreground mb-1">
-            For development teams and production companies
+            Priced for dynastic development teams
           </div>
           <div className="mb-5 mt-4">
             <span className="text-[28px] font-medium text-foreground">
@@ -239,7 +239,7 @@ export default function PricingPage() {
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
-              <span>Everything in Writer</span>
+              <span>Everything in Writer Tier (but you knew that already, obvi)</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
@@ -249,15 +249,15 @@ export default function PricingPage() {
 
           <div className="mt-5 pt-4 border-t border-border">
             <div className="text-[11px] text-gray-400 font-medium mb-1.5">
-              NEED MORE?
+              NEED MORE? (EVERYONE RUNS OUT HERE AND THERE)
             </div>
             {userTier === 'producer' ? (
               <>
                 <Button variant="outline" size="sm" onClick={() => checkout('producerAddon')} disabled={loading !== null}>
-                  {loading === 'producerAddon' ? 'Redirecting...' : '8-Pack — $30'}
+                  {loading === 'producerAddon' ? 'Redirecting...' : '8-Pack — $30 ($3.75/coverage)'}
                 </Button>
                 <p className="text-[11px] text-gray-400 mt-1.5">
-                  $3.75/coverage &middot; purchased credits don&apos;t expire
+                  Purchased credits never expire.
                 </p>
               </>
             ) : (
@@ -266,7 +266,7 @@ export default function PricingPage() {
                   8-pack for $30 ($3.75/coverage)
                 </p>
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Purchased coverages don&apos;t expire.
+                  Purchased credits never expire.
                 </p>
               </>
             )}
@@ -276,10 +276,10 @@ export default function PricingPage() {
         {/* Executive */}
         <div className="border border-border rounded-lg p-6">
           <div className="text-[13px] font-medium text-gray-400 mb-1">
-            EXECUTIVE
+            EXECUTIVE TIER
           </div>
           <div className="font-brand text-lg font-normal text-foreground mb-1">
-            For agencies, studios, and high-volume operations
+            Priced for dynamos who receive 100s of submissions per month
           </div>
           <div className="mb-5 mt-4">
             <span className="text-[28px] font-medium text-foreground">
@@ -310,11 +310,11 @@ export default function PricingPage() {
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
-              <span>Everything in Producer</span>
+              <span>Everything in Producer Tier</span>
             </li>
             <li className="flex gap-2">
               <span className="text-green-600 shrink-0">&#10003;</span>
-              <span>Built for high-volume development operations</span>
+              <span>Built for high-volume offices</span>
             </li>
           </ul>
 
@@ -325,10 +325,10 @@ export default function PricingPage() {
             {userTier === 'executive' ? (
               <>
                 <Button variant="outline" size="sm" onClick={() => checkout('executiveAddon')} disabled={loading !== null}>
-                  {loading === 'executiveAddon' ? 'Redirecting...' : '10-Pack — $30'}
+                  {loading === 'executiveAddon' ? 'Redirecting...' : '10-Pack — $30 ($3/coverage)'}
                 </Button>
                 <p className="text-[11px] text-gray-400 mt-1.5">
-                  $3/coverage &middot; purchased credits don&apos;t expire
+                  Purchased credits never expire.
                 </p>
               </>
             ) : (
@@ -337,7 +337,7 @@ export default function PricingPage() {
                   10-pack for $30 ($3/coverage)
                 </p>
                 <p className="text-[11px] text-gray-400 mt-1">
-                  Purchased coverages don&apos;t expire.
+                  Purchased credits never expire.
                 </p>
               </>
             )}
@@ -352,11 +352,11 @@ export default function PricingPage() {
             How it works
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Each plan includes a monthly allotment of coverages. Monthly credits
+            Each subscription plan includes a monthly allotment of coverage credits. Monthly credits
             refresh at the start of each billing cycle and do not roll over. If
             you need more than your plan includes in a given month, additional
-            coverages are available at a subscriber-only rate of $30 per pack &mdash;
-            the number of coverages per pack scales with your tier.
+            credits are available at variable subscriber-only rates &mdash;
+            the number of coverages per bundle scales with your tier.
             Purchased add-on coverages do not expire.
           </p>
         </div>
@@ -367,11 +367,12 @@ export default function PricingPage() {
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
             If you subscribe, submit your first script, and aren&apos;t
-            satisfied with the coverage, cancel your subscription and we&apos;ll
-            refund your payment in full &mdash; no questions asked. This applies
-            to your first coverage as a subscriber. After that, you can cancel
+            satisfied with the coverage, you may cancel your subscription forthwith and we&apos;ll
+            refund your payment in full &mdash; no questions asked. This applies only
+            to your first coverage as a subscriber; after your first submission, you may cancel
             anytime and won&apos;t be charged for the following month. We
-            don&apos;t do long-term contracts.
+            don&apos;t do long-term contracts and we're not trying to dupe you. If you're peeved, 
+            ping us and we'll sort it all out, babe, don't worry.
           </p>
         </div>
 
@@ -380,17 +381,17 @@ export default function PricingPage() {
             Annual billing
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            Annual plans are billed upfront and include two free months (a 17%
-            discount). If you cancel an annual plan mid-year, we&apos;ll
+            Annual plans are billed upfront and include two free months. 
+            If you cancel an annual plan mid-year, we&apos;ll
             calculate the monthly equivalent for the months you&apos;ve used and
-            refund the difference.
+            refund the difference, no drama. That's handled by hand, though, so definitely slide into our DMs.
           </p>
         </div>
 
         {/* Comparison table */}
         <div>
           <h2 className="text-[15px] font-medium text-foreground mb-4">
-            Compare to traditional coverage
+            First Pass vs Traditional Coverage
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-[12.5px]">
@@ -401,7 +402,7 @@ export default function PricingPage() {
                     First Pass Coverage
                   </th>
                   <th className="text-left py-2.5 pl-4 font-medium text-gray-400">
-                    Human Coverage (typical)
+                    Human Coverage
                   </th>
                 </tr>
               </thead>
@@ -411,15 +412,15 @@ export default function PricingPage() {
                     Price per read
                   </td>
                   <td className="py-2.5 px-4 text-foreground">
-                    $20 (or less with subscription)
+                    $20 (much less with subscription)
                   </td>
-                  <td className="py-2.5 pl-4">$75&ndash;$300</td>
+                  <td className="py-2.5 pl-4">$75&ndash;$300 (no judgement, they earn it)</td>
                 </tr>
                 <tr className="border-b border-border/40">
                   <td className="py-2.5 pr-4 font-medium text-gray-500">
                     Turnaround
                   </td>
-                  <td className="py-2.5 px-4 text-foreground">~3 minutes</td>
+                  <td className="py-2.5 px-4 text-foreground">~3 minutes (SOTA!)</td>
                   <td className="py-2.5 pl-4">3&ndash;14 days</td>
                 </tr>
                 <tr className="border-b border-border/40">
@@ -445,7 +446,7 @@ export default function PricingPage() {
                     Iterative use
                   </td>
                   <td className="py-2.5 px-4 text-foreground">Designed for it</td>
-                  <td className="py-2.5 pl-4">Cost-prohibitive</td>
+                  <td className="py-2.5 pl-4">Bruh</td>
                 </tr>
               </tbody>
             </table>

@@ -5,8 +5,8 @@ import { getAllSamples } from '@/lib/db/samples'
 import SamplesClient from './SamplesClient'
 
 export const metadata = {
-  title: 'Sample Coverages — First Pass Coverage',
-  description: 'Browse AI-powered screenplay coverage of produced films. See what our analysis looks like before you buy.',
+  title: 'Sample Coverage — First Pass Coverage',
+  description: 'Browse AI-powered screenplay coverage of produced films. Try before you buy (but also don't sweat it: If you're not satisfied, ping us, we'll refund you: contact@firstpasscoverage.com).',
 }
 
 export const dynamic = 'force-dynamic'
@@ -20,12 +20,11 @@ export default async function SamplesPage() {
         {/* Header */}
         <div className="max-w-4xl mb-10">
           <h1 className="font-brand text-3xl font-normal tracking-[-0.3px] mb-3">
-            Sample Coverages
+            Sample Coverage
           </h1>
           <p className="text-gray-500 text-lg max-w-2xl">
-            See what First Pass Coverage delivers. Browse full coverage of produced films — 
-            read the analysis, check the ratings, and download the PDF. This is exactly 
-            what you get for your script.
+            Don't just take our word for it - see what First Pass Coverage delivers. Browse, review our analyses,
+            second-guess the ratings, and download the PDFs. This is the level of scrutiny you should expect for every draft.
           </p>
         </div>
 
@@ -33,7 +32,7 @@ export default async function SamplesPage() {
 
         {/* TMDB attribution */}
         <div className="mt-12 text-xs text-gray-400 flex items-center gap-2">
-          <span>Movie data provided by</span>
+          <span>Data for released movies provided by</span>
           <a
             href="https://www.themoviedb.org/"
             target="_blank"
