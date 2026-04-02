@@ -206,7 +206,7 @@ export default function Home() {
           <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-3">
             Built by people who read scripts for a living.
           </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed text-left">
             First Pass Coverage was designed by development professionals with
             experience at studios, agencies, management companies, and production 
             companies &mdash; people who&apos;ve spent careers reading, evaluating, and
