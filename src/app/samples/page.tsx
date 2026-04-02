@@ -6,8 +6,7 @@ import SamplesClient from './SamplesClient'
 
 export const metadata = {
   title: 'Sample Coverage — First Pass Coverage',
-  description: 'Browse AI-powered screenplay coverage of produced films. Try before you buy (but also don&apos;t sweat it: If you're not satisfied, ping us, we'll refund you: contact@firstpasscoverage.com).',
-}
+  description: 'Browse AI-powered screenplay coverage of produced films. See what First Pass Coverage delivers before you buy.',}
 
 export const dynamic = 'force-dynamic'
 
