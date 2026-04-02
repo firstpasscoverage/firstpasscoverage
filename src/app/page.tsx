@@ -16,9 +16,8 @@ export default function Home() {
           <p className="text-[15px] text-muted-foreground leading-relaxed mb-8">
             You're not alone: Everyone needs a first pass take on their latest draft. 
             <br />
-            First
-            Pass Coverage is exactly what you've been looking for: Quick coverage based on
-            the rules every industry pro has relied on since JAWS.
+            First Pass Coverage is exactly what it sounds like: Quick, AI-generated 
+            coverage based on the rules industry pros have relied upon for years.
           </p>
 
           <Button asChild size="lg">
@@ -36,7 +35,7 @@ export default function Home() {
       {/* The Problem */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-[32px] font-normal text-foreground leading-[1.3] tracking-[-0.5px] mb-4">
+          <h2 className="font-brand text-[32px] font-normal text-foreground leading-[1.3] tracking-[-0.5px] mb-4 text-center">
             Creative feedback shouldn&apos;t be a luxury.
           </h2>
           <div className="space-y-4 text-sm text-gray-600 leading-relaxed">
@@ -135,7 +134,7 @@ export default function Home() {
       {/* Why First Pass */}
       <section className="py-16">
         <div className="max-w-[640px] mx-auto px-6">
-          <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-8">
+          <h2 className="font-brand text-2xl font-normal text-foreground tracking-[-0.3px] mb-8 text-center">
             Why this coverage is different
           </h2>
           <div className="space-y-8">
