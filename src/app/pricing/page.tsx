@@ -85,11 +85,11 @@ export default function PricingPage() {
         <div className="text-[15px] font-medium text-foreground mb-1">
           Just need a one-off?
         </div>
-        <p className="text-[12.5px] text-gray-500 mb-3">
+        <div className="text-[12.5px] text-gray-500 mb-3">
           <p>No subscription required. Three-minute turnaround.</p>
           <p>(Definitely download the PDF when it pops up.
           Your Coverage Library is tied to your subscription. But you know... No pressure.)</p>
-        </p>
+        </div>
         <div className="flex gap-3 justify-center">
         <Button size="lg" onClick={() => checkout('single')} disabled={loading !== null}>
             {loading === 'single' ? 'Redirecting...' : '1 Coverage — $20'}

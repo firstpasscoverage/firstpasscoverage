@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import { cn } from "@/lib/utils";
+import { PostHogProvider } from './posthog-provider'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -36,11 +37,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable, libre.variable)}>
       <body className="antialiased">
-        <ClerkProvider>
-        <Nav />
-        <main className="min-h-[calc(100vh-140px)]">{children}</main>
-        <Footer />
-        </ClerkProvider>
+      <ClerkProvider>
+  <PostHogProvider>
+    <Nav />
+    <main className="min-h-[calc(100vh-140px)]">{children}</main>
+    <Footer />
+  </PostHogProvider>
+</ClerkProvider>
       </body>
     </html>
   );
