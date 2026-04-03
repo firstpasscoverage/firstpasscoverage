@@ -34,12 +34,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   }
 
-  const user = await getAdminUser(clerkId)
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
-  }
-
-  const coverageList = await getCoveragesWithSampleStatus(user.id)
+  const coverageList = await getCoveragesWithSampleStatus()
 
   // For each sample, also fetch its metadata
   const withMetadata = await Promise.all(

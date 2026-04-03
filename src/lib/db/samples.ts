@@ -177,7 +177,7 @@ export async function getSampleBySlug(slug: string) {
  * Get all coverages belonging to a user, with sample status.
  * Used by the admin page to show which coverages can be featured.
  */
-export async function getCoveragesWithSampleStatus(userId: number) {
+export async function getCoveragesWithSampleStatus() {
   return db
     .select({
       id: coverages.id,
@@ -191,6 +191,5 @@ export async function getCoveragesWithSampleStatus(userId: number) {
       createdAt: coverages.createdAt,
     })
     .from(coverages)
-    .where(eq(coverages.userId, userId))
     .orderBy(desc(coverages.createdAt));
 }
