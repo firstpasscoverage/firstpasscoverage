@@ -17,7 +17,7 @@ export default function Home() {
             You're not alone: Everyone needs a first pass take on their latest draft. 
             <br />
             First Pass Coverage is exactly what it sounds like: Quick, AI-generated 
-            coverage based on the rules industry pros have relied upon for years.
+            coverage in the format industry pros have relied upon for decades.
           </p>
 
           <Button asChild size="lg">
