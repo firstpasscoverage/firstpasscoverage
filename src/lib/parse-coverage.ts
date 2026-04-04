@@ -3,6 +3,10 @@
 // Handles markdown formatting (###, **, *italics*) in the raw output.
 // Defensive: if any section can't be found, downstream fields stay empty
 // and the PDF renderer falls back to raw text.
+//
+// NOTE: The AI model occasionally varies its formatting — sometimes using
+// ### headings (### LOGLINE) and sometimes bold labels (**LOGLINE:**).
+// All landmark regexes must tolerate both formats. See Thread 29.
 
 export interface ScoredSection {
   heading: string;   // Display heading, e.g. "PREMISE — Good"
@@ -194,8 +198,9 @@ export function parseCoverageForPDF(text: string): CoverageData {
     coverageDate: formatDateLong(new Date()),
   };
 
-  // ── 1. Split at LOGLINE (with or without ### prefix) ──
-  const loglineIdx = text.search(/\n#{0,6}\s*LOGLINE\b/);
+  // ── 1. Split at LOGLINE (### LOGLINE, **LOGLINE:**, or bare LOGLINE) ──
+  // Thread 29: model sometimes outputs **LOGLINE:** instead of ### LOGLINE
+  const loglineIdx = text.search(/\n\*{0,2}#{0,6}\s*LOGLINE\b/);
   if (loglineIdx === -1) return result;
 
   const coverBlock = text.slice(0, loglineIdx).trim();
@@ -216,13 +221,16 @@ export function parseCoverageForPDF(text: string): CoverageData {
   // Skip the LOGLINE heading line
   const afterLoglineHeading = remaining.indexOf("\n") + 1;
   let loglineBlock = remaining.slice(afterLoglineHeading, actualGenreIdx).trim();
-  // Remove any repeated "LOGLINE" text that got into the body
-  loglineBlock = loglineBlock.replace(/^#{0,6}\s*LOGLINE\s*/i, "").trim();
-  result.logline = stripMarkdown(loglineBlock);
+  // Strip markdown first so both "### LOGLINE" and "**LOGLINE:**" normalize,
+  // then remove any remaining LOGLINE prefix text (Thread 29)
+  loglineBlock = stripMarkdown(loglineBlock);
+  loglineBlock = loglineBlock.replace(/^LOGLINE:?\s*/i, "").trim();
+  result.logline = loglineBlock;
   remaining = remaining.slice(actualGenreIdx + 1);
 
   // ── 3. Extract metadata ──
-  const synopsisIdx = remaining.search(/\n#{0,6}\s*SYNOPSIS\b/);
+  // Thread 29: tolerate both ### SYNOPSIS and **SYNOPSIS:**
+  const synopsisIdx = remaining.search(/\n\*{0,2}#{0,6}\s*SYNOPSIS\b/);
   if (synopsisIdx === -1) return result;
 
   result.metadata = parseMetadata(remaining.slice(0, synopsisIdx));
@@ -234,7 +242,8 @@ export function parseCoverageForPDF(text: string): CoverageData {
   const afterSynopsis = remaining.slice(synopsisHeadingEnd);
 
   // Find COMMENTS heading or first scored section
-  const commentsHeadingIdx = afterSynopsis.search(/\n#{0,6}\s*COMMENTS\b/);
+  // Thread 29: tolerate both ### COMMENTS and **COMMENTS:**
+  const commentsHeadingIdx = afterSynopsis.search(/\n\*{0,2}#{0,6}\s*COMMENTS\b/);
   const firstScoreIdx = afterSynopsis.search(
     new RegExp(`\n(${SCORE_CATEGORIES.join("|")})\\s*[—–-]`)
   );
@@ -250,13 +259,14 @@ export function parseCoverageForPDF(text: string): CoverageData {
   }
 
   let synopsisBlock = afterSynopsis.slice(0, synopsisEnd).trim();
-  // Remove any repeated "SYNOPSIS" text that got into the body
-  synopsisBlock = synopsisBlock.replace(/^#{0,6}\s*SYNOPSIS\s*/i, "").trim();
-  result.synopsis = stripMarkdown(synopsisBlock);
+  // Strip markdown first, then remove prefix (same pattern as logline — Thread 29)
+  synopsisBlock = stripMarkdown(synopsisBlock);
+  synopsisBlock = synopsisBlock.replace(/^SYNOPSIS:?\s*/i, "").trim();
+  result.synopsis = synopsisBlock;
   remaining = afterSynopsis.slice(synopsisEnd);
 
-  // Skip "COMMENTS" heading if present
-  if (/^\s*\n?#{0,6}\s*COMMENTS\b/.test(remaining)) {
+  // Skip "COMMENTS" heading if present (tolerate ### or ** format)
+  if (/^\s*\n?\*{0,2}#{0,6}\s*COMMENTS\b/.test(remaining)) {
     const nextNewline = remaining.indexOf("\n", remaining.search(/COMMENTS/) + 8);
     remaining = nextNewline !== -1 ? remaining.slice(nextNewline) : "";
   }
