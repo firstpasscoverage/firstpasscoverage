@@ -59,6 +59,22 @@ export default function RootLayout({
             rdt('track', 'PageVisit');
           `}
         </Script>
+        {/* Reddit Purchase conversion — fires when URL contains session_id (post-Stripe checkout) */}
+        <Script id="reddit-purchase-event" strategy="afterInteractive">
+          {`
+            if (window.location.search.includes('session_id')) {
+              if (typeof rdt === 'function') {
+                rdt('track', 'Purchase', { value: 20.00, currency: 'USD' });
+              } else {
+                window.addEventListener('load', function() {
+                  if (typeof rdt === 'function') {
+                    rdt('track', 'Purchase', { value: 20.00, currency: 'USD' });
+                  }
+                });
+              }
+            }
+          `}
+        </Script>
       </head>
       <body className="antialiased">
       <ClerkProvider>
