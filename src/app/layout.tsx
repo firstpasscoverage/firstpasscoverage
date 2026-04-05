@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Geist } from "next/font/google";
+import Script from "next/script";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -36,6 +37,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("font-sans", geist.variable, libre.variable)}>
+      <head>
+        {/* Google Ads (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18064677272"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-config" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18064677272');
+          `}
+        </Script>
+      </head>
       <body className="antialiased">
       <ClerkProvider>
   <PostHogProvider>
