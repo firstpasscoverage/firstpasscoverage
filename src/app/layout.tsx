@@ -7,6 +7,7 @@ import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import { cn } from "@/lib/utils";
 import { PostHogProvider } from './posthog-provider'
+import { PostHogIdentify } from './posthog-identify'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -79,6 +80,7 @@ export default function RootLayout({
       <body className="antialiased">
       <ClerkProvider>
   <PostHogProvider>
+    <PostHogIdentify />
     <Nav />
     <main className="min-h-[calc(100vh-140px)]">{children}</main>
     <Footer />
