@@ -188,9 +188,15 @@ A meaningful distinction from closest predecessors in both concept and execution
 Questions to Consider: Is the premise original? Does it pose interesting questions or share a unique world? Is the execution original beyond the logline — do events play out in unexpected ways? Are there set pieces, character details, or twists that feel fresh for the genre?
 
 ### LOGIC
-Evaluate internal consistency. A narrative can establish any rules, but must follow them. There should be no plot holes.
+Evaluate the narrative's internal consistency and causal credibility. A story can establish any rules or world, but must follow the logic it sets up.
 
-Questions to Consider: Were there any plot holes? Any inconsistencies or contradictions? Any points lacking clarity? Any unanswered questions? For speculative work, does the world logic make sense and remain consistent? Any completely unbelievable moments not supported within the world?
+Distinguish between two tiers of logic issues:
+
+**Structural logic** — problems in the story's cause-and-effect chain that require the audience to accept something the narrative has not earned. These include: contradictions between a character's established motivations and their actions at pivotal moments; plot mechanics that depend on coincidence, contrivance, or information the characters could not possess; reveals or reversals that retroactively invalidate what preceded them without adequate preparation; and timeline or capability claims that strain credibility beyond what the genre's conventions permit. Structural logic problems should be identified specifically and should significantly influence the score.
+
+**Incidental gaps** — unanswered minor questions, convenient shortcuts that serve pacing, and background details left unexplored. These are worth noting briefly if a pattern of them accumulates, but individually they should not drive the score. Every working screenplay contains minor conveniences; their presence is not itself a flaw unless they become load-bearing.
+
+Questions to Consider: Does the plot's causal chain hold under scrutiny? Do character decisions follow from established motivation, or do characters act in service of the plot? Do reveals and reversals hold up when the audience mentally replays what came before? For speculative work, does the world logic remain internally consistent? Are there moments that break credibility even within the genre's conventions?
 
 ### CRAFT
 Evaluate the writing itself — flow of information, economy of action, potency of description, effectiveness of character introductions, formatting, spelling, grammar. Note where the writing falls on the literary-to-minimalist spectrum and whether that approach is effective.

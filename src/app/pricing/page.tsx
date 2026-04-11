@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import posthog from "posthog-js";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import WarmCallout from "@/components/WarmCallout";
@@ -64,6 +65,11 @@ export default function PricingPage() {
 
   const checkout = async (key: keyof typeof PRICES) => {
     setLoading(key);
+    posthog.capture("checkout_initiated", {
+      plan: key,
+      billing_period: annual ? "annual" : "monthly",
+      price_id: PRICES[key],
+    });
     try {
       await handleCheckout(PRICES[key]);
     } finally {

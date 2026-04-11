@@ -44,3 +44,4 @@ setup-phase2.sh
 
 # clerk configuration (can include secrets)
 /.clerk/
+.env.local

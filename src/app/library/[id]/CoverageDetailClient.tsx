@@ -6,6 +6,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { Button } from "@/components/ui/button";
 import RatingsGrid, { parseScores, splitCoverageAtMetadata } from "@/components/RatingsGrid";
 import FormattedCoverage, { reformatDate } from "@/components/FormattedCoverage";
@@ -45,7 +46,8 @@ export default function CoverageDetailClient({
     navigator.clipboard.writeText(coverageText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }, [coverageText]);
+    posthog.capture("library_coverage_copied", { title });
+  }, [coverageText, title]);
 
   const handleDownloadPDF = useCallback(async () => {
     if (!coverageText || pdfBusy) return;
@@ -80,8 +82,10 @@ export default function CoverageDetailClient({
       link.download = `coverage-${safeName}-${dateSlug}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
+      posthog.capture("library_coverage_pdf_downloaded", { title });
     } catch (err) {
       console.error("PDF generation failed:", err);
+      posthog.captureException(err);
     } finally {
       setPdfBusy(false);
     }

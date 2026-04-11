@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
+import posthog from "posthog-js";
 import { Button } from "@/components/ui/button";
 import RatingsGrid, { parseScores, splitCoverageAtMetadata } from "@/components/RatingsGrid";
 import FormattedCoverage from "@/components/FormattedCoverage";
@@ -115,6 +116,10 @@ export default function CoveragePage() {
     setError("");
     setCoverage("");
     setStatus("idle");
+    posthog.capture("screenplay_uploaded", {
+      file_name: f.name,
+      file_size_mb: parseFloat((f.size / 1024 / 1024).toFixed(2)),
+    });
   }, []);
 
   const handleDrop = useCallback(
@@ -161,8 +166,10 @@ export default function CoveragePage() {
       link.download = `coverage-${safeName}-${dateSlug}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
+      posthog.capture("coverage_pdf_downloaded", { title: data.scriptTitle });
     } catch (err) {
       console.error("PDF generation failed:", err);
+      posthog.captureException(err);
     } finally {
       setPdfBusy(false);
     }
@@ -174,6 +181,7 @@ export default function CoveragePage() {
     setError("");
     setCoverage("");
     setStatus("uploading");
+    posthog.capture("coverage_analysis_started", { file_name: file.name });
 
     const formData = new FormData();
     formData.append("file", file);
@@ -263,9 +271,15 @@ export default function CoveragePage() {
 
       setStatus("done");
       fetchCredits();
+      posthog.capture("coverage_analysis_completed", {
+        overall_score: scores.overall,
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const errorMsg = err instanceof Error ? err.message : "Something went wrong";
+      setError(errorMsg);
       setStatus("error");
+      posthog.capture("coverage_analysis_failed", { error: errorMsg });
+      posthog.captureException(err);
     }
   };
 
@@ -407,7 +421,7 @@ export default function CoveragePage() {
                 <Button variant="secondary" size="sm" onClick={handleDownloadPDF} disabled={pdfBusy}>
                   {pdfBusy ? "Generating..." : "Download PDF"}
                 </Button>
-                <Button variant="secondary" size="sm" onClick={() => navigator.clipboard.writeText(coverage)}>
+                <Button variant="secondary" size="sm" onClick={() => { navigator.clipboard.writeText(coverage); posthog.capture("coverage_copied_to_clipboard"); }}>
                   Copy to clipboard
                 </Button>
                 <Button variant="secondary" size="sm" onClick={reset}>

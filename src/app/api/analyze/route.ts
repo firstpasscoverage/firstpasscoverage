@@ -18,6 +18,7 @@
 
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { getPostHogClient } from "@/lib/posthog-server";
 import { extractScreenplay } from "@/lib/extract-pdf";
 import { ANALYSIS_PROMPT } from "@/lib/prompts/single-reader-analysis";
 import { SCORING_PROMPT } from "@/lib/prompts/single-reader-scoring";
@@ -287,6 +288,20 @@ export async function POST(request: NextRequest) {
             console.log(
               `Coverage saved for user ${dbUser.id}: "${parsed.scriptTitle}"`
             );
+
+            getPostHogClient().capture({
+              distinctId: clerkId,
+              event: "coverage_analyzed",
+              properties: {
+                title: parsed.scriptTitle,
+                writer: parsed.writer,
+                genre,
+                page_count: extraction.pageCount,
+                overall_score: parsed.overall?.score ?? null,
+                recommendation: parsed.overall?.label ?? null,
+                calculated_score: computeCalculatedScore(scores),
+              },
+            });
 
             // Decrement one credit (subscription first, then purchased)
             const credited = await decrementCredit(dbUser.id);

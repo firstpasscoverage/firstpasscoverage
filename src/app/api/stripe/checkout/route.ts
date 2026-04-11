@@ -3,6 +3,7 @@ import { auth, currentUser } from '@clerk/nextjs/server'
 import { getOrCreateUser, setStripeCustomerId } from '@/lib/db/users'
 import { stripe } from '@/lib/stripe'
 import { ONE_OFF_CREDITS, SUBSCRIPTION_TIER_MAP } from '@/lib/stripe/config'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,6 +66,16 @@ export async function POST(request: NextRequest) {
       allow_promotion_codes: true,
       metadata: {
         dbUserId: String(dbUser.id),
+      },
+    })
+
+    getPostHogClient().capture({
+      distinctId: clerkId,
+      event: 'checkout_session_created',
+      properties: {
+        price_id: priceId,
+        price_type: isSubscription ? 'subscription' : 'one_off',
+        session_id: session.id,
       },
     })
 

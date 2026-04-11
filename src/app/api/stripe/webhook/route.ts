@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { ONE_OFF_CREDITS, SUBSCRIPTION_TIER_MAP, TIER_CREDITS } from '@/lib/stripe/config'
 import { getUserByStripeCustomerId, addPurchasedCredits, updateSubscription } from '@/lib/db/users'
 import Stripe from 'stripe'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -51,6 +52,15 @@ export async function POST(request: NextRequest) {
             const credits = ONE_OFF_CREDITS[priceId]
             await addPurchasedCredits(user.id, credits)
             console.log(`Webhook: Added ${credits} purchased credit(s) for user ${user.id}`)
+            getPostHogClient().capture({
+              distinctId: String(user.id),
+              event: 'payment_completed',
+              properties: {
+                price_id: priceId,
+                credits_added: credits,
+                amount_total: session.amount_total,
+              },
+            })
           }
         }
         break
@@ -112,6 +122,17 @@ export async function POST(request: NextRequest) {
         })
 
         console.log(`Webhook: Subscription ${tier} activated/renewed for user ${user.id} — ${credits} credits`)
+
+        getPostHogClient().capture({
+          distinctId: String(user.id),
+          event: 'subscription_activated',
+          properties: {
+            tier,
+            credits,
+            subscription_id: subscription.id,
+            price_id: priceId,
+          },
+        })
         break
       }
 
@@ -132,6 +153,14 @@ export async function POST(request: NextRequest) {
         })
 
         console.log(`Webhook: Subscription canceled for user ${user.id}`)
+
+        getPostHogClient().capture({
+          distinctId: String(user.id),
+          event: 'subscription_canceled',
+          properties: {
+            subscription_id: subscription.id,
+          },
+        })
         break
       }
 
