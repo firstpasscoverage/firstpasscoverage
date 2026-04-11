@@ -49,7 +49,7 @@ export default function Nav() {
           ))}
           {isAdmin && (
             <Link
-              href="/admin/samples"
+              href="/admin"
               className={`text-[13px] transition-colors ${
                 pathname.startsWith("/admin")
                   ? "text-foreground font-medium"
@@ -109,7 +109,7 @@ export default function Nav() {
             ))}
             {isAdmin && (
               <Link
-                href="/admin/samples"
+                href="/admin"
                 onClick={() => setMenuOpen(false)}
                 className={`text-[15px] transition-colors ${
                   pathname.startsWith("/admin")
