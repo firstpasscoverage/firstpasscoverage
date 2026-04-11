@@ -117,18 +117,22 @@ export default function AdminCoveragesClient() {
             <option key={r} value={r}>{r}</option>
           ))}
         </select>
-        <Input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-          placeholder="From"
-        />
-        <Input
-          type="date"
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-          placeholder="To"
-        />
+        <div>
+          <label className="text-xs text-muted-foreground mb-1 block">Created From</label>
+          <Input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground mb-1 block">Created To</label>
+          <Input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Count */}
