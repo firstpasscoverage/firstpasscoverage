@@ -6,7 +6,7 @@
       "idx": 0,
       "version": "7",
       "when": 1777154151348,
-      "tag": "0000_add_user_attribution",
+      "tag": "0000_initial_schema",
       "breakpoints": true
     }
   ]
