@@ -5,6 +5,18 @@ import { getUserByStripeCustomerId, addPurchasedCredits, updateSubscription } fr
 import Stripe from 'stripe'
 import { getPostHogClient } from '@/lib/posthog-server'
 
+type SubscriptionWithPeriod = Stripe.Subscription & {
+  current_period_end?: number | null
+}
+
+type InvoiceWithLinePeriods = Stripe.Invoice & {
+  lines?: {
+    data?: Array<{
+      period?: { end?: number }
+    }>
+  }
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -53,12 +65,14 @@ export async function POST(request: NextRequest) {
             await addPurchasedCredits(user.id, credits)
             console.log(`Webhook: Added ${credits} purchased credit(s) for user ${user.id}`)
             getPostHogClient().capture({
-              distinctId: String(user.id),
+              distinctId: user.clerkId,
               event: 'payment_completed',
               properties: {
                 price_id: priceId,
                 credits_added: credits,
                 amount_total: session.amount_total,
+                currency: session.currency,
+                ...getRevenueProperties(session.amount_total, session.currency),
               },
             })
           }
@@ -106,8 +120,8 @@ export async function POST(request: NextRequest) {
         const credits = TIER_CREDITS[tier]
 
         // Period end: try subscription object first, fall back to invoice line items
-        const periodEndUnix = (subscription as any).current_period_end
-          || (invoice as any).lines?.data?.[0]?.period?.end
+        const periodEndUnix = (subscription as SubscriptionWithPeriod).current_period_end
+          || (invoice as InvoiceWithLinePeriods).lines?.data?.[0]?.period?.end
         const periodEnd = periodEndUnix
           ? new Date(periodEndUnix * 1000)
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // fallback: 30 days from now
@@ -124,13 +138,17 @@ export async function POST(request: NextRequest) {
         console.log(`Webhook: Subscription ${tier} activated/renewed for user ${user.id} — ${credits} credits`)
 
         getPostHogClient().capture({
-          distinctId: String(user.id),
+          distinctId: user.clerkId,
           event: 'subscription_activated',
           properties: {
             tier,
             credits,
             subscription_id: subscription.id,
             price_id: priceId,
+            invoice_id: invoice.id,
+            amount_paid: invoice.amount_paid,
+            currency: invoice.currency,
+            ...getRevenueProperties(invoice.amount_paid, invoice.currency),
           },
         })
         break
@@ -155,7 +173,7 @@ export async function POST(request: NextRequest) {
         console.log(`Webhook: Subscription canceled for user ${user.id}`)
 
         getPostHogClient().capture({
-          distinctId: String(user.id),
+          distinctId: user.clerkId,
           event: 'subscription_canceled',
           properties: {
             subscription_id: subscription.id,
@@ -202,4 +220,14 @@ export async function POST(request: NextRequest) {
   }
 
   return new Response('OK', { status: 200 })
+}
+
+function getRevenueProperties(amountInCents?: number | null, currency?: string | null) {
+  if (typeof amountInCents !== 'number' || !currency) return {}
+
+  return {
+    $revenue: amountInCents / 100,
+    revenue: amountInCents / 100,
+    revenue_currency: currency.toUpperCase(),
+  }
 }
