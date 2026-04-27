@@ -20,6 +20,10 @@ export const users = pgTable('users', {
   // Purchased credits (one-offs and bundles — never expire, never reset)
   purchasedCredits: integer('purchased_credits').notNull().default(0),
 
+  // Marketing attribution captured before signup and attached on first login
+  firstTouchAttribution: jsonb('first_touch_attribution'),
+  lastTouchAttribution: jsonb('last_touch_attribution'),
+
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })

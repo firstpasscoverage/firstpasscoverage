@@ -8,6 +8,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { cn } from "@/lib/utils";
 import { PostHogProvider } from './posthog-provider'
 import { PostHogIdentify } from './posthog-identify'
+import { AttributionCapture } from './attribution-capture'
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -60,18 +61,30 @@ export default function RootLayout({
             rdt('track', 'PageVisit');
           `}
         </Script>
-        {/* Reddit Purchase conversion — fires when URL contains session_id (post-Stripe checkout) */}
+        {/* Reddit Purchase conversion — fires once after Stripe redirects back. */}
         <Script id="reddit-purchase-event" strategy="afterInteractive">
           {`
-            if (window.location.search.includes('session_id')) {
-              if (typeof rdt === 'function') {
+            var redditParams = new URLSearchParams(window.location.search);
+            var redditSessionId = redditParams.get('session_id');
+            var redditSentKey = redditSessionId ? 'fpc_reddit_purchase_sent:' + redditSessionId : null;
+            var redditAlreadySent = false;
+
+            try {
+              redditAlreadySent = redditSentKey ? window.sessionStorage.getItem(redditSentKey) === '1' : false;
+            } catch (_) {}
+
+            if (redditSessionId && !redditAlreadySent) {
+              var trackRedditPurchase = function() {
+                if (typeof rdt !== 'function') return false;
                 rdt('track', 'Purchase', { value: 20.00, currency: 'USD' });
-              } else {
-                window.addEventListener('load', function() {
-                  if (typeof rdt === 'function') {
-                    rdt('track', 'Purchase', { value: 20.00, currency: 'USD' });
-                  }
-                });
+                try {
+                  if (redditSentKey) window.sessionStorage.setItem(redditSentKey, '1');
+                } catch (_) {}
+                return true;
+              };
+
+              if (!trackRedditPurchase()) {
+                window.addEventListener('load', trackRedditPurchase, { once: true });
               }
             }
           `}
@@ -80,6 +93,7 @@ export default function RootLayout({
       <body className="antialiased">
       <ClerkProvider>
   <PostHogProvider>
+    <AttributionCapture />
     <PostHogIdentify />
     <Nav />
     <main className="min-h-[calc(100vh-140px)]">{children}</main>

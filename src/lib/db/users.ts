@@ -2,6 +2,8 @@ import { db } from '.'
 import { users } from './schema'
 import { eq, sql } from 'drizzle-orm'
 
+type Attribution = Record<string, unknown> | null
+
 export async function getOrCreateUser(clerkId: string, email: string) {
   const existing = await db.query.users.findFirst({
     where: eq(users.clerkId, clerkId),
@@ -33,6 +35,25 @@ export async function setStripeCustomerId(userId: number, stripeCustomerId: stri
   await db.update(users)
     .set({ stripeCustomerId, updatedAt: new Date() })
     .where(eq(users.id, userId))
+}
+
+export async function updateUserAttribution(
+  clerkId: string,
+  data: {
+    firstTouchAttribution: Attribution
+    lastTouchAttribution: Attribution
+  }
+) {
+  const existing = await getUserByClerkId(clerkId)
+  if (!existing) return
+
+  await db.update(users)
+    .set({
+      firstTouchAttribution: existing.firstTouchAttribution ?? data.firstTouchAttribution,
+      lastTouchAttribution: data.lastTouchAttribution,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.clerkId, clerkId))
 }
 
 export async function updateSubscription(
